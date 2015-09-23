@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">ShareARide</string>
+
+    <string name="input_instruction">Please enter your usename below</string>
+    <string name="login_title">Welcome to Share A Ride!</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_event_list">EventListActivity</string>
+
+    <string name="event_list_banner">Welcome $1$s! Here are your upcoming events:</string>
+
+
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_host_event">HostEventActivity</string>
+</resources>
