@@ -1,8 +1,12 @@
 <resources>
-    <string name="app_name">ShareARide</string>
+    <string name="app_name">Share a Ride</string>
 
     <string name="input_instruction">Please enter your usename below</string>
     <string name="login_title">Welcome to Share A Ride!</string>
+    <string name="login_username">Email</string>
+    <string name="login_password">Password</string>
+    <string name="login_button">Log In</string>
+    <string name="sign_up_button">Sign Up</string>
 
     <string name="action_settings">Settings</string>
     <string name="title_activity_event_list">EventListActivity</string>
@@ -12,4 +16,11 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_host_event">HostEventActivity</string>
+
+    <string name="sign_up_action_bar">Sign Up</string>
+    <string name="sign_up_email">Email</string>
+    <string name="sign_up_password">Password</string>
+    <string name="sign_up_reenter_password">Reenter Password</string>
+    <string name="sign_up_sign_up_button">Sign Up</string>
+
 </resources>

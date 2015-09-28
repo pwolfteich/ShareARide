@@ -66,7 +66,7 @@ public class EventListActivity extends AppCompatActivity {
     }
     public void logOut(View view)
     {
-        Intent logOutEvent = new Intent(this,LoginActivity.class);
+        Intent logOutEvent = new Intent(this,LogInActivity.class);
         startActivity(logOutEvent);
     }
     public void createEvent(View view) {

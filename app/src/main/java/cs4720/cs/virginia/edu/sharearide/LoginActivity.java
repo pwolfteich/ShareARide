@@ -1,21 +1,33 @@
 package cs4720.cs.virginia.edu.sharearide;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import com.parse.ParseObject;
 
-public class LoginActivity extends AppCompatActivity {
+public class LogInActivity extends AppCompatActivity {
+
+    static String LogTag = "LogInActivityLogTag";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // log
+        Log.v(LogTag, "LogInActivity onCreate()");
+
         setContentView(R.layout.activity_login);
         //Should check if previously logged in (check local dbase), and if so auto login
+
+        ParseObject testObject = new ParseObject("TestObject");
+        testObject.put("foo", "bar");
+        testObject.saveInBackground();
+        Log.v(LogTag, "LogInActivity saved test Parse object");
     }
 
     @Override
@@ -39,7 +51,11 @@ public class LoginActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    public void login(View view) {
+
+    //
+    // Buttons
+
+    public void logInButtonTapped(View view) {
 
 
         TextView tv = (TextView)findViewById(R.id.textView2);
@@ -58,4 +74,13 @@ public class LoginActivity extends AppCompatActivity {
         tv.setText(inputMessage);
         */
     }
+
+    public void signUpButtonTapped(View view) {
+        Log.v("LogInActivity", "Sign up button tapped");
+        // start sign up activity
+        Intent signUpIntent = new Intent(this, SignUpActivity.class);
+        signUpIntent.putExtra("hi", "hi");
+        startActivity(signUpIntent);
+    }
+
 }
