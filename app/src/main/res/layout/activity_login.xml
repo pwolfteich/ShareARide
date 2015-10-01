@@ -13,11 +13,11 @@
         android:id="@+id/loginButton"
         android:onClick="logInButtonTapped"
         android:text="@string/login_button"
-        android:layout_centerVertical="true"
+        android:layout_marginRight="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_below="@+id/passwordField"
         android:layout_alignRight="@+id/textView2"
-        android:layout_alignEnd="@+id/textView2"
-        android:layout_marginRight="31dp"
-        android:layout_marginEnd="31dp" />
+        android:layout_alignEnd="@+id/textView2" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -82,11 +82,11 @@
         android:layout_height="wrap_content"
         android:text="@string/sign_up_button"
         android:id="@+id/signUpButton"
-        android:layout_centerVertical="true"
+        android:layout_marginLeft="27dp"
+        android:layout_marginStart="27dp"
+        android:onClick="signUpButtonTapped"
+        android:layout_below="@+id/passwordField"
         android:layout_alignLeft="@+id/textView2"
-        android:layout_alignStart="@+id/textView2"
-        android:layout_marginLeft="28dp"
-        android:layout_marginStart="28dp"
-        android:onClick="signUpButtonTapped" />
+        android:layout_alignStart="@+id/textView2" />
 
 </RelativeLayout>

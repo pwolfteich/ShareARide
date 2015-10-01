@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 import com.parse.ParseObject;
 
-public class LoginActivity extends AppCompatActivity {
+public class LogInActivity extends AppCompatActivity {
 
     static String LogTag = "LogInActivityLogTag";
 

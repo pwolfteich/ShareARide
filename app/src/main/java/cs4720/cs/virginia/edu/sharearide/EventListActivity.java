@@ -43,6 +43,7 @@ public class EventListActivity extends AppCompatActivity {
             eventsList.add(name);
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -64,11 +65,13 @@ public class EventListActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
     public void logOut(View view)
     {
-        Intent logOutEvent = new Intent(this,LogInActivity.class);
+        Intent logOutEvent = new Intent(this, LogInActivity.class);
         startActivity(logOutEvent);
     }
+
     public void createEvent(View view) {
 
         Intent hostEventIntent = new Intent(this, HostEventActivity.class);
