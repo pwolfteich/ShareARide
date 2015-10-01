@@ -4,9 +4,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -14,34 +21,121 @@ import java.util.ArrayList;
 public class EventListActivity extends AppCompatActivity {
 
     String username;
-    ArrayList<String> eventsList = new ArrayList<String>();
+    ArrayList<Event> eventList;
+    ArrayList<String> eventTitles;
+    EventsDbHelper dbHelper;
+    ListView listEvents;
+    EventListAdapter eventListAdapter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
         Intent startingIntent = getIntent();
         username = startingIntent.getStringExtra ("username");
+        dbHelper = new EventsDbHelper(this);
+        eventList = new ArrayList<Event>();
+        eventTitles = new ArrayList<String>();
         // Setting the banner welcoming the user
         String customBanner = getResources().getString(R.string.event_list_banner, username);
         TextView tv = (TextView) findViewById(R.id.textView3);
         tv.setText(customBanner);
 
-        loadPrefs();
+        listEvents = (ListView) findViewById( R.id.eventsListView );
+        //eventListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, eventTitles);
+        eventListAdapter = new EventListAdapter(this,eventList);
+        loadEvents();
         // Retrieving user's events
+        /*
+        eventListAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, eventTitles);
+        listEvents.setAdapter(eventListAdapter);*/
+        listEvents.setLongClickable(true);
+        listEvents.setClickable(true);
+        listEvents.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
-        //setSilent(silent);
-        //String strMeatMsg = String.format(strMeatFormat, numPoundsMeat);
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+                                           int pos, long id) {
+                // TODO Auto-generated method stub
+                //TextView tv = (TextView) ((ListView) arg0).getChildAt(pos);
+                //String name = tv.getText().toString();
+                Event ev = (Event) arg0.getItemAtPosition(pos);
+                String name = ev.toString();
+                int eventId = -1;
+                for (Event e : eventList) {
+                    if (e.getName().equals(name)) {
+                        eventId = e.getId();
+                        break;
+                    }
+                }
+                if (eventId == -1) {
+
+                    Log.e("No id found", "Event named " + name + " did not have a corresponding name in the database");
+                } else {
+                    dbHelper.deleteEvent(eventId);
+                    loadEvents();
+                }
+                return true;
+            }
+        });
+        listEvents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+
+                Event ev = (Event) parent.getItemAtPosition(position);
+                String name = ev.toString();
+                int eventId = -1;
+                for (int ctr = 0;ctr<eventList.size();ctr++) {
+                    if (eventList.get(ctr).getId() == ev.getId()) {
+                        eventList.get(ctr).setExpanded(!ev.isExpanded());
+                        break;
+                    }
+                }
+
+                eventListAdapter.notifyDataSetChanged();
+                /*TextView txt_view = (TextView) view.findViewById(R.id.);
+
+                txt_view.setVisibility(View.GONE);
+
+                RelativeLayout rl_inflate = (RelativeLayout) view.findViewById(R.id.
+                View child = getLayoutInflater().inflate(R.layout.inflate);
+                rl_inflate.addView(child);
+
+/*
+                Button my_btn = (Button) child.findViewById(R.id.btn_replace);
+                EditText enter_txt = (EditText) child.findViewById(R.id.enter_txt);
+
+                my_btn.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        txt_view.setText(enter_txt.getText().toString());
+                        txt_view.setVisibility(View.VISIBLE);
+                    }
+                });*/
+            }
+        });
+
     }
-    public void loadPrefs()
+    public void loadEvents()
     {
-        SharedPreferences settings = getSharedPreferences(username, 0);
-        String name = settings.getString("name", "");
-        String date = settings.getString("date", "");
-        String location = settings.getString("loc","");
-        String description = settings.getString("desc","");
-        if( eventsList.contains(name) == false)
-            eventsList.add(name);
-
+        //eventList = dbHelper.getEvents();
+        eventList.clear();
+        eventList.addAll(dbHelper.getEvents());
+        eventTitles.clear();
+        for(Event e: eventList)
+        {
+            eventTitles.add(e.getName());
+        }
+        if(eventTitles.size() == 0) {
+            eventTitles.add("No upcoming events");
+        }
+        //eventListAdapter.updateData(eventList);
+        eventListAdapter.notifyDataSetChanged();
+        listEvents.setAdapter(eventListAdapter);
     }
 
     @Override
@@ -65,13 +159,17 @@ public class EventListActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        loadEvents();
+    }
     public void logOut(View view)
     {
-        Intent logOutEvent = new Intent(this, LogInActivity.class);
+        Intent logOutEvent = new Intent(this,LoginActivity.class);
         startActivity(logOutEvent);
     }
-
     public void createEvent(View view) {
 
         Intent hostEventIntent = new Intent(this, HostEventActivity.class);

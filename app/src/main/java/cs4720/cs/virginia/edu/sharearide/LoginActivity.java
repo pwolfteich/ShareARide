@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 import com.parse.ParseObject;
 
-public class LogInActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     static String LogTag = "LogInActivityLogTag";
 
@@ -23,6 +23,7 @@ public class LogInActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
         //Should check if previously logged in (check local dbase), and if so auto login
+        //Will do with sharedPreferences
 
         ParseObject testObject = new ParseObject("TestObject");
         testObject.put("foo", "bar");
@@ -58,7 +59,7 @@ public class LogInActivity extends AppCompatActivity {
     public void logInButtonTapped(View view) {
 
 
-        TextView tv = (TextView)findViewById(R.id.textView2);
+        TextView tv = (TextView)findViewById(R.id.usernameField);
         String username = tv.getText().toString();
         Intent eventListIntent = new Intent(this,EventListActivity.class);
         eventListIntent.putExtra("username",username);

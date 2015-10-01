@@ -51,6 +51,16 @@ public class Event implements Comparable{
 
     public int id;
 
+    public boolean isExpanded() {
+        return expanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        this.expanded = expanded;
+    }
+
+    public boolean expanded;
+
     public Event(){
 
     }
@@ -60,6 +70,11 @@ public class Event implements Comparable{
         this.date=date;
         this.location=location;
         this.description=desc;
+        this.expanded = false;
+    }
+    public String toString()
+    {
+        return name;
     }
 
     @Override

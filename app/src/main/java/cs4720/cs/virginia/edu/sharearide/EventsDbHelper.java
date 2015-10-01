@@ -13,8 +13,6 @@ import java.util.ArrayList;
  */
 public class EventsDbHelper extends SQLiteOpenHelper {
 
-
-
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "Events.db";
     public static final String TABLE_NAME = "Events";
@@ -31,7 +29,7 @@ public class EventsDbHelper extends SQLiteOpenHelper {
                     COLUMN_NAME + TEXT_TYPE + COMMA_SEP +
                     COLUMN_DATE + TEXT_TYPE + COMMA_SEP +
                     COLUMN_LOCATION + TEXT_TYPE + COMMA_SEP +
-                    COLUMN_DESCRIPTION+ TEXT_TYPE + COMMA_SEP +
+                    COLUMN_DESCRIPTION+
                     " )";
 
     private static final String SQL_DELETE_ENTRIES =
@@ -54,7 +52,7 @@ public class EventsDbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_ENTRY_ID, event.getId());
+        //values.put(COLUMN_ENTRY_ID, event.getId());
         values.put(COLUMN_NAME, event.getName());
         values.put(COLUMN_DATE, event.getDate());
         values.put(COLUMN_DESCRIPTION, event.getDescription());
@@ -69,13 +67,14 @@ public class EventsDbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_ENTRY_ID, event.getId());
+        //values.put(COLUMN_ENTRY_ID, event.getId());
         values.put(COLUMN_NAME, event.getName());
         values.put(COLUMN_DATE, event.getDate());
         values.put(COLUMN_DESCRIPTION, event.getDescription());
         values.put(COLUMN_LOCATION, event.getLocation());
 
         db.update(TABLE_NAME, values, COLUMN_ENTRY_ID, new String[]{String.valueOf(event.getId())});
+        db.close(); // Closing database connection
     }
     public Event getEvent(int id)
     {
@@ -83,19 +82,22 @@ public class EventsDbHelper extends SQLiteOpenHelper {
 
         Cursor cursor = db.query(TABLE_NAME,new String[] {COLUMN_NAME, COLUMN_DATE,COLUMN_LOCATION, COLUMN_DESCRIPTION}, COLUMN_ENTRY_ID+"=?", new String[] {""+id},null,null,null,null);
         cursor.moveToFirst();
-        return new Event(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
+        Event tmp = new Event(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
+        db.close();
+        return tmp;
     }
     public ArrayList<Event> getEvents()
     {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Event> retVal = new ArrayList<Event>();
-        Cursor cursor = db.query(TABLE_NAME,new String[] {COLUMN_NAME, COLUMN_DATE,COLUMN_LOCATION, COLUMN_DESCRIPTION}, COLUMN_ENTRY_ID+"=?", new String[] {"*"},null,null,null,null);
-        cursor.moveToFirst();
-        do {
-            retVal.add(new Event(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4)));
+        Cursor cursor = db.query(TABLE_NAME,new String[] {COLUMN_ENTRY_ID, COLUMN_NAME, COLUMN_DATE,COLUMN_LOCATION, COLUMN_DESCRIPTION}, COLUMN_ENTRY_ID+" LIKE ?", new String[] {"%"},null,null,null,null);
+        if (cursor.moveToFirst() && !(cursor.getCount() == 0)) {
+            do {
+                retVal.add(new Event(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4)));
+            }
+            while (cursor.moveToNext());
         }
-        while( cursor.moveToNext());
-
+        db.close();
         return retVal;
     }
     public void deleteEvent(int id)
@@ -103,6 +105,7 @@ public class EventsDbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         int result  = db.delete(TABLE_NAME,COLUMN_ENTRY_ID+"=?",new String[] {""+id});
+        db.close();
         return;
     }
 
