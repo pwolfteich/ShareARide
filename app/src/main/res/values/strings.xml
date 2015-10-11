@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Share a Ride</string>
 
-    <string name="input_instruction">Please enter your usename below</string>
+    <string name="input_instruction">Please enter your username below</string>
     <string name="login_title">Welcome to Share A Ride!</string>
-    <string name="login_username">Email</string>
+    <string name="login_username">Username</string>
     <string name="login_password">Password</string>
     <string name="login_button">Log In</string>
     <string name="sign_up_button">Sign Up</string>
@@ -19,6 +19,7 @@
 
     <string name="sign_up_action_bar">Sign Up</string>
     <string name="sign_up_email">Email</string>
+    <string name="sign_up_username">Username</string>
     <string name="sign_up_password">Password</string>
     <string name="sign_up_reenter_password">Reenter Password</string>
     <string name="sign_up_sign_up_button">Sign Up</string>

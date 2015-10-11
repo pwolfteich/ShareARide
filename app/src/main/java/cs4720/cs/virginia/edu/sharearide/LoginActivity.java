@@ -15,6 +15,8 @@ import com.parse.*;
 
 public class LoginActivity extends AppCompatActivity {
 
+    public static int SIGN_UP_SUCCEEDED = 1;
+
     static String LogTag = "LogInActivityLogTag";
 
     @Override
@@ -62,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
     public void logInButtonTapped(View view) {
 
         // get username
-        TextView usernameView = (TextView)findViewById(R.id.usernameField);
+        TextView usernameView = (TextView)findViewById(R.id.usernameTextView);
         String username = usernameView.getText().toString();
         TextView passwordView = (TextView)findViewById(R.id.passwordField);
         String password = passwordView.getText().toString();
@@ -71,7 +73,6 @@ public class LoginActivity extends AppCompatActivity {
             public void done(ParseUser user, ParseException e) {
                 if (user != null) {
                     // Hooray! The user is logged in.
-
                     finish();
                 } else {
                     // Signup failed. Look at the ParseException to see what happened.
@@ -84,36 +85,26 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
-//        Intent eventListIntent = new Intent(this,EventListActivity.class);
-//        eventListIntent.putExtra("username",username);
-//        startActivity(eventListIntent);
-        // get password
-
-
-        /*
-        tv.setText("");
-
-        Location currentLocation = locListener.getLastKnownLocation();
-        if (currentLocation != null) {
-            inputMessage = inputMessage + " at " + currentLocation.getLatitude() + " degrees lat, " + currentLocation.getLongitude() + " degrees long";
-        }
-        tv = (TextView) findViewById(R.id.MessageOutput);
-        tv.setText(inputMessage);
-        */
     }
 
     public void signUpButtonTapped(View view) {
         Log.v("LogInActivity", "Sign up button tapped");
         // start sign up activity
-        //Intent signUpIntent = new Intent(this, SignUpActivity.class);
-        //signUpIntent.putExtra("hi", "hi");
-        //startActivity(signUpIntent);
+        Intent signUpIntent = new Intent(this, SignUpActivity.class);
+        startActivityForResult(signUpIntent, 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == SIGN_UP_SUCCEEDED) {
+            Log.v(LoginActivity.class.getName(), "Sign up succeeded.");
+            finish();
+        }
     }
 
     @Override
     public void onBackPressed() {
-
+        // do nothing
     }
 
 }

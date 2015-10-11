@@ -157,6 +157,25 @@ public class EventListActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        //loadEvents();
+
+        // check if user is logged in
+        ParseUser user = ParseUser.getCurrentUser();
+        if (user == null) {
+            // login
+            Log.v(EventListActivity.class.getName(), "User not logged in");
+            Intent logInIntent = new Intent(this, LoginActivity.class);
+            startActivity(logInIntent);
+        } else {
+            Log.v(EventListActivity.class.getName(), "User logged in");
+        }
+    }
+
+
 
     public void loadEvents()
     {
@@ -198,23 +217,7 @@ public class EventListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        //loadEvents();
 
-        // check if user is logged in
-        ParseUser user = ParseUser.getCurrentUser();
-        if (user == null) {
-            // login
-            Log.v(EventListActivity.class.getName(), "User not logged in");
-            Intent logInIntent = new Intent(this, LoginActivity.class);
-            startActivity(logInIntent);
-        } else {
-            Log.v(EventListActivity.class.getName(), "User logged in");
-        }
-    }
 
     public void logOut(View view)
     {
