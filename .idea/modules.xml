@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/app/libs/ParseUI-Login/ParseUI-Login.iml" filepath="$PROJECT_DIR$/app/libs/ParseUI-Login/ParseUI-Login.iml" />
       <module fileurl="file://$PROJECT_DIR$/ShareARide.iml" filepath="$PROJECT_DIR$/ShareARide.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>

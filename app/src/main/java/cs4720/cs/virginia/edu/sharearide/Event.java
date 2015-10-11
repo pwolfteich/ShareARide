@@ -3,7 +3,16 @@ package cs4720.cs.virginia.edu.sharearide;
 /**
  * Created by McNulty-PC on 9/29/2015.
  */
-public class Event implements Comparable{
+
+import com.parse.ParseObject;
+import com.parse.ParseClassName;
+
+@ParseClassName("Event")
+public class Event extends ParseObject implements Comparable {
+
+    // ParseObject
+
+
     public String getName() {
         return name;
     }
