@@ -10,12 +10,15 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 public class InviteFriends extends AppCompatActivity {
 
     ArrayList<String> friendsList;
     ArrayList<String> invitedFriends;
+    InviteListAdapter inviteAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,9 +32,10 @@ public class InviteFriends extends AppCompatActivity {
         TextView tv = (TextView) findViewById(R.id.textView14);
         tv.setText(customBanner);
         friendsList = new ArrayList<String>();
+        invitedFriends = new ArrayList<String>();
 
         loadFriends();
-        InviteListAdapter inviteAdapter = new InviteListAdapter(this,friendsList);
+        inviteAdapter = new InviteListAdapter(this,friendsList,invitedFriends);
 
         inviteAdapter.notifyDataSetChanged();
         listEvents.setAdapter(inviteAdapter);
@@ -43,6 +47,8 @@ public class InviteFriends extends AppCompatActivity {
         friendsList.clear();
         friendsList.add("First friend");
         friendsList.add("second Friend");
+
+        invitedFriends.add("First friend");
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -68,7 +74,13 @@ public class InviteFriends extends AppCompatActivity {
 
     public void addFriend(View view)
     {
-
+        TextView tv = (TextView) findViewById(R.id.editText6);
+        String newFriend = tv.getText().toString();
+        if(!friendsList.contains(newFriend))
+        {
+            friendsList.add(newFriend);
+        }
+        inviteAdapter.notifyDataSetChanged();
     }
     public void invite(View view)
     {

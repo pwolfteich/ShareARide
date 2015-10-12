@@ -17,10 +17,12 @@ import java.util.ArrayList;
  */
 public class InviteListAdapter extends BaseAdapter {
     ArrayList<String> data;
+    ArrayList<String> invited;
     Context c;
-    public InviteListAdapter (Context context, ArrayList<String> datas)
+    public InviteListAdapter (Context context, ArrayList<String> datas, ArrayList<String> invites)
     {
         this.data = datas;
+        this.invited = invites;
         c=context;
     }
     @Override
@@ -35,17 +37,21 @@ public class InviteListAdapter extends BaseAdapter {
             convertView = li.inflate(R.layout.friend_row, null);
         }
 
+        CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.checkBox2);
+
         if (ev != null) {
             TextView name = (TextView) convertView.findViewById(R.id.textView15);
             name.setText(ev);
+            checkBox.setChecked(invited.contains(ev));
         }
-        CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.checkBox2);
         checkBox.setTag(ev);
         return convertView;
     }
-    public void updateData(ArrayList<String> newlist) {
+    public void updateData(ArrayList<String> newlist, ArrayList<String> invites) {
         data.clear();
         data.addAll(newlist);
+        invited.clear();
+        invited.addAll(invites);
         this.notifyDataSetChanged();
     }
     public int getCount() {
