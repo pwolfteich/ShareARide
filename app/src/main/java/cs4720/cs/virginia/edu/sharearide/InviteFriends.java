@@ -19,6 +19,7 @@ public class InviteFriends extends AppCompatActivity {
     ArrayList<String> friendsList;
     ArrayList<String> invitedFriends;
     InviteListAdapter inviteAdapter;
+    FriendStorageHelper friendHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +34,7 @@ public class InviteFriends extends AppCompatActivity {
         tv.setText(customBanner);
         friendsList = new ArrayList<String>();
         invitedFriends = new ArrayList<String>();
+        friendHelper = new FriendStorageHelper("friends",this);
 
         loadFriends();
         inviteAdapter = new InviteListAdapter(this,friendsList,invitedFriends);
@@ -44,11 +46,13 @@ public class InviteFriends extends AppCompatActivity {
 
     public void loadFriends()
     {
+        /*
         friendsList.clear();
         friendsList.add("First friend");
         friendsList.add("second Friend");
 
-        invitedFriends.add("First friend");
+        invitedFriends.add("First friend");*/
+        friendsList = friendHelper.readFriends();
     }
 
     @Override
@@ -77,11 +81,12 @@ public class InviteFriends extends AppCompatActivity {
     {
         TextView tv = (TextView) findViewById(R.id.editText6);
         String newFriend = tv.getText().toString();
-        if(!friendsList.contains(newFriend))
+        /*if(!friendsList.contains(newFriend))
         {
             friendsList.add(newFriend);
-        }
+        }*/
         inviteAdapter.notifyDataSetChanged();
+        friendHelper.addFriend(newFriend);
     }
     public void invite(View view)
     {

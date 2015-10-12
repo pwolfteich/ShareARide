@@ -261,6 +261,9 @@ public class EventListActivity extends AppCompatActivity {
     public void logOut()
     {
         //possibly replace this with finish
+
+        FriendStorageHelper friendHelper = new FriendStorageHelper("friends",this);
+        friendHelper.deleteFile();
         Intent logOutEvent = new Intent(this,LoginActivity.class);
         startActivity(logOutEvent);
     }
