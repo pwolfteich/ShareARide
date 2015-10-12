@@ -44,6 +44,7 @@ public class InviteFriends extends AppCompatActivity {
         friendsList.add("First friend");
         friendsList.add("second Friend");
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
