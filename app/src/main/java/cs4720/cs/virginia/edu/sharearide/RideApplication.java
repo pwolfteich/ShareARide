@@ -13,6 +13,18 @@ public class RideApplication extends Application {
 
     static String LogTag = "RideApplicationLogTag";
 
+    public Event getCurrentEvent() {
+        return currentEvent;
+    }
+
+    public void setCurrentEvent(Event currentEvent) {
+        this.currentEvent = currentEvent;
+    }
+
+    Event currentEvent;
+
+
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -25,7 +37,7 @@ public class RideApplication extends Application {
         Log.v(LogTag, "Application onCreate()");
 
         // Parse
-        Parse.enableLocalDatastore(this);
+        //Parse.enableLocalDatastore(this);
         ParseObject.registerSubclass(Event.class);
         Parse.initialize(this, "Sh5dYjUxshRrnA3G1uHQua4LzisHV5o8eexJXu74", "r80yIRA4BOPx3Ex9SABv5C3FVu9l39CemDkyGc3d");
     }

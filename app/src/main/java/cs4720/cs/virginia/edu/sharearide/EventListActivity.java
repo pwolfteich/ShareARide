@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -41,6 +42,7 @@ public class EventListActivity extends AppCompatActivity {
     SensorManager isShaken;
     SensorEventListener accelerometer;
 
+    int chosenCellIndex = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +102,7 @@ public class EventListActivity extends AppCompatActivity {
                 return true;
             }
         });
+
         listEvents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -110,58 +113,26 @@ public class EventListActivity extends AppCompatActivity {
                 String name = ev.toString();
                 int eventId = -1;
                 for (int ctr = 0; ctr < eventList.size(); ctr++) {
+
                     if (eventList.get(ctr).getId() == ev.getId()) {
-                        eventList.get(ctr).setExpanded(!ev.isExpanded());
-                        break;
+                        if (!ev.isExpanded()) {
+                            eventList.get(ctr).setExpanded(true);
+                            chosenCellIndex = ctr;
+                        } else {
+                            eventList.get(ctr).setExpanded(false);
+                            chosenCellIndex = -1;
+                        }
+                    } else {
+                        eventList.get(ctr).setExpanded(false);
                     }
+
                 }
 
                 listEvents.setClickable(true);
 
                 eventListAdapter.notifyDataSetChanged();
-                /*TextView txt_view = (TextView) view.findViewById(R.id.);
-
-                txt_view.setVisibility(View.GONE);
-
-                RelativeLayout rl_inflate = (RelativeLayout) view.findViewById(R.id.
-                View child = getLayoutInflater().inflate(R.layout.inflate);
-                rl_inflate.addView(child);
-
-/*
-                Button my_btn = (Button) child.findViewById(R.id.btn_replace);
-                EditText enter_txt = (EditText) child.findViewById(R.id.enter_txt);
-
-                my_btn.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        txt_view.setText(enter_txt.getText().toString());
-                        txt_view.setVisibility(View.VISIBLE);
-                    }
-                });*/
             }
         });
-
-//        ParseObject obj = new ParseObject("TestObject");
-//        obj.put("foo", "new object");
-//        obj.pinInBackground();
-
-//        ParseQuery<ParseObject> query = ParseQuery.getQuery("TestObject");
-//        query.whereEqualTo("foo", "new object");
-//        query.fromLocalDatastore();
-//        query.findInBackground(new FindCallback<ParseObject>() {
-//            public void done(List<ParseObject> list,
-//                             ParseException e) {
-//                if (e == null) {
-//                    Log.d("score", "Retrieved " + list.size());
-//                    ParseObject obj = list.get(0);
-//                    Log.v(EventListActivity.class.getName(), obj.getString("foo"));
-//
-//                } else {
-//                    Log.d("score", "Error: " + e.getMessage());
-//                }
-//            }
-//        });
 
     }
 
@@ -182,7 +153,24 @@ public class EventListActivity extends AppCompatActivity {
         } else {
             Log.v(EventListActivity.class.getName(), "User logged in");
 
+            // refresh user
+            user.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject parseObject, ParseException e) {
+                    if (e == null) {
+                        ParseUser user = (ParseUser)parseObject;
+                        Log.v(EventListActivity.class.getName(), "Refreshed user with objectId " + user.getObjectId());
 
+                        ArrayList<ParseUser> friends = (ArrayList<ParseUser>)user.get("friends");
+                        for (ParseUser friend : friends) {
+                            Log.v(EventListActivity.class.getName(), friend.getObjectId());
+                        }
+
+                    } else {
+                        Log.e(EventListActivity.class.getName(), "Error refreshing user.");
+                    }
+                }
+            });
         }
     }
     public void onShake()
@@ -275,19 +263,46 @@ public class EventListActivity extends AppCompatActivity {
 
         startActivity(hostEventIntent);
     }
+
     public void respondEvent(View view) {
         Intent rsvpEvent = new Intent(this,RsvpActivity.class);
         //EventListAdapter  ela= (EventListAdapter)(view.getParent());
-        Event event = (Event) view.getTag();
+        Event event = eventList.get(chosenCellIndex);
+        Log.v(EventListActivity.class.getName(), "RSVP to event: " + event);
+        // set event as the current event
+        RideApplication app = (RideApplication)getApplication();
+        app.setCurrentEvent(event);
+        // add to intent
         rsvpEvent.putExtra("eventId", event.getId());
         startActivity(rsvpEvent);
     }
+
     public void inviteToEvent(View view)
     {
-        Intent inviteEvent = new Intent(this,InviteFriends.class);
-        //EventListAdapter  ela= (EventListAdapter)(view.getParent());
-        Event event = (Event) view.getTag();
+        Intent inviteEvent = new Intent(this, InviteFriends.class);
+        // index is the chosen cell index
+        // get the event
+        Event event = eventList.get(chosenCellIndex);
+        Log.v(EventListActivity.class.getName(), "Invite to event: " + event);
+        // set event as the current event
+        RideApplication app = (RideApplication)getApplication();
+        app.setCurrentEvent(event);
+        //Log.v(EventListActivity.class.getName(), event.getObjectId());
+        // add to intent
         inviteEvent.putExtra("eventName", event.getName());
         startActivity(inviteEvent);
     }
+
+    public View getViewByPosition(int pos, ListView listView) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            final int childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
+    }
+
 }

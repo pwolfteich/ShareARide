@@ -9,10 +9,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Button;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
@@ -28,12 +30,18 @@ import org.w3c.dom.Text;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import android.view.inputmethod.InputMethodManager;
 
 public class InviteFriends extends AppCompatActivity {
 
     ArrayList<String> friendsList;
     ArrayList<String> invitedFriends;
     InviteListAdapter inviteAdapter;
+
+    ArrayList<ParseUser> friendUserList;
+    ArrayList<ParseUser> invitedFriendUserList;
+
+    Event currentEvent;
 
     int friendFetchCount = 0;
 
@@ -52,11 +60,26 @@ public class InviteFriends extends AppCompatActivity {
         friendsList = new ArrayList<String>();
         invitedFriends = new ArrayList<String>();
 
+        friendUserList = new ArrayList<ParseUser>();
+        invitedFriendUserList = new ArrayList<ParseUser>();
+
         loadFriends();
-        inviteAdapter = new InviteListAdapter(this,friendsList,invitedFriends);
+        inviteAdapter = new InviteListAdapter(this, friendsList, invitedFriends);
 
         inviteAdapter.notifyDataSetChanged();
         listEvents.setAdapter(inviteAdapter);
+
+        RideApplication app = (RideApplication)getApplication();
+        currentEvent = app.getCurrentEvent();
+        Log.v(InviteFriends.class.getName(), "Current event objectId: " + currentEvent.getObjectId());
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        TextView textView = (TextView)findViewById(R.id.searchFriendField);
 
     }
 
@@ -64,22 +87,31 @@ public class InviteFriends extends AppCompatActivity {
     {
         ParseUser currentUser = ParseUser.getCurrentUser();
         ArrayList<ParseUser> friends = (ArrayList<ParseUser>)currentUser.get("friends");
-        for (ParseUser user : friends) {
-            user.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
-                @Override
-                public void done(ParseObject parseObject, ParseException e) {
-                    // one more friend fetched
-                    friendFetchCount++;
-                    // check if all friends are fetched
-                    ParseUser currentUser = ParseUser.getCurrentUser();
-                    ArrayList<ParseUser> friends = (ArrayList<ParseUser>)currentUser.get("friends");
-                    // if all friends fetched
-                    // update UI
-                    if (friendFetchCount == friends.size()) {
-                        loadListView();
+        if (friends.size() > 0) {
+            for (ParseUser user : friends) {
+                user.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+                    @Override
+                    public void done(ParseObject parseObject, ParseException e) {
+                        // one more friend fetched
+                        friendFetchCount++;
+                        // check if all friends are fetched
+                        ParseUser currentUser = ParseUser.getCurrentUser();
+                        ArrayList<ParseUser> friends = (ArrayList<ParseUser>) currentUser.get("friends");
+                        // if all friends fetched
+                        // update UI
+                        if (friendFetchCount == friends.size()) {
+                            loadListView();
+                            ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
                     }
-                }
-            });
+                });
+
+                Log.v(InviteFriends.class.getName(), user.getObjectId());
+            }
+        } else {
+            ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
+            progressBar.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -89,10 +121,14 @@ public class InviteFriends extends AppCompatActivity {
         ArrayList<ParseUser> friends = (ArrayList<ParseUser>)currentUser.get("friends");
         for (int i = 0; i < friends.size(); i++) {
             ParseUser friend = friends.get(i);
-            friendsList.add(friend.getUsername());
+            if (!friendsList.contains(friend.getUsername())) {
+                friendsList.add(friend.getUsername());
+            }
+            if (!friendUserList.contains(friend)) {
+                friendUserList.add(friend);
+            }
         }
-        ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.INVISIBLE);
+
     }
 
     @Override
@@ -119,7 +155,7 @@ public class InviteFriends extends AppCompatActivity {
 
     public void addFriend(View view)
     {
-        TextView tv = (TextView) findViewById(R.id.editText6);
+        TextView tv = (TextView) findViewById(R.id.searchFriendField);
         String newFriendName = tv.getText().toString();
         if (!friendsList.contains(newFriendName))
         {
@@ -131,7 +167,7 @@ public class InviteFriends extends AppCompatActivity {
                 public void done(List<ParseUser> list, ParseException e) {
                     if (e == null) {
                         Context context = getApplicationContext();
-                        CharSequence text = "";
+                        CharSequence text;
                         int duration = Toast.LENGTH_SHORT;
 
                         if (list.size() == 0) {
@@ -141,6 +177,7 @@ public class InviteFriends extends AppCompatActivity {
                             // add friend to database
                             ParseUser friend = list.get(0);
                             addNewFriend(friend);
+                            loadFriends();
                         } else {
                             text = "More than one friend with that username.";
                         }
@@ -167,8 +204,13 @@ public class InviteFriends extends AppCompatActivity {
                 int duration = Toast.LENGTH_SHORT;
                 if (e == null) {
                     text = "Added friend!";
-                    TextView textView = (TextView)findViewById(R.id.editText6);
+                    TextView textView = (TextView) findViewById(R.id.searchFriendField);
                     textView.setText("");
+
+                    // need this for some reason
+                    EditText editText = (EditText)findViewById(R.id.searchFriendField);
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                 } else {
                     text = "Failed to add friend :(";
                 }
@@ -180,6 +222,67 @@ public class InviteFriends extends AppCompatActivity {
 
     }
 
+    public void inviteButtonTapped(View view) {
+
+        // get button
+        Button inviteButton = (Button)view;
+        inviteButton.setEnabled(false);
+        // get event
+        RideApplication app = (RideApplication)getApplication();
+        Event currentEvent = app.getCurrentEvent();
+        ArrayList<ParseUser> invitees = (ArrayList<ParseUser>)currentEvent.get("invitees");
+        invitees.addAll(invitedFriendUserList);
+        //currentEvent.setInvitees(invitees);
+        currentEvent.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.v(InviteFriends.class.getName(), "Invited friends to event.");
+                    // toast
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "Invited friends.", Toast.LENGTH_SHORT);
+                    toast.show();
+                    finish();
+                } else {
+                    Log.e(InviteFriends.class.getName(), "Failed to invite friends to event.");
+                }
+            }
+        });
+    }
+
+    public void inviteCheckBoxTapped(View view) {
+        CheckBox checkBox = (CheckBox)view;
+        ListView listView = (ListView) findViewById(R.id.listView);
+
+        Log.v(InviteFriends.class.getName(), "check box " + checkBox);
+        Log.v(InviteFriends.class.getName(), "check box parent " + checkBox.getParent());
+        Log.v(InviteFriends.class.getName(), "check box parent parent " + checkBox.getParent().getParent());
+        for (int i = 0; i < listView.getChildCount(); i++) {
+            View child = listView.getChildAt(i);
+            if (child == checkBox.getParent()) { // get index of checkbox
+
+                // get friend
+                ParseUser friend = friendUserList.get(i);
+
+                if (checkBox.isChecked()) {
+                    invitedFriendUserList.add(friend);
+                } else {
+                    invitedFriendUserList.remove(friend);
+                }
+                Log.v(InviteFriends.class.getName(), "Selected " + i);
+            }
+        }
+
+        Log.v(InviteFriends.class.getName(), "Invited count " + invitedFriendUserList.size());
+
+        for (int i = 0; i < invitedFriendUserList.size(); i++) {
+            ParseUser friend = invitedFriendUserList.get(i);
+            Log.v(InviteFriends.class.getName(), "Invited friend: " + i + " " + friend.getUsername());
+        }
+
+    }
+
+    /*
     public void invite(View view)
     {
         String name =(String) view.getTag();
@@ -195,6 +298,6 @@ public class InviteFriends extends AppCompatActivity {
         {
             invitedFriends.add(name);
         }
-
     }
+    */
 }
