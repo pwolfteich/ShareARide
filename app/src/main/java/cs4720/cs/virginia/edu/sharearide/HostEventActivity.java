@@ -36,7 +36,8 @@ public class HostEventActivity extends AppCompatActivity {
         }
         Intent startingIntent = getIntent();
         username = startingIntent.getStringExtra ("username");
-        dbHelper = new EventsDbHelper(this);
+        //dbHelper = new EventsDbHelper(this);
+        dbHelper = EventsDbHelper.getInstance(this);
         oldLocation="Location";
     }
 

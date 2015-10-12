@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.lang.reflect.Array;
@@ -50,7 +51,10 @@ public class EventListAdapter extends BaseAdapter {
                 TextView date = (TextView) convertView.findViewById(R.id.editText3);
                 TextView loc = (TextView) convertView.findViewById(R.id.editText4);
                 TextView desc = (TextView) convertView.findViewById(R.id.editText5);
-
+                Button rsvp = (Button) convertView.findViewById(R.id.button3);
+                rsvp.setTag(ev);
+                Button invite = (Button) convertView.findViewById(R.id.button5);
+                invite.setTag(ev);
                 if (date != null) {
                     date.setText(ev.getDate());
                 }

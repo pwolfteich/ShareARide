@@ -34,7 +34,8 @@ public class EventListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_list);
         Intent startingIntent = getIntent();
         username = startingIntent.getStringExtra ("username");
-        dbHelper = new EventsDbHelper(this);
+        //dbHelper = new EventsDbHelper(this);
+        dbHelper = EventsDbHelper.getInstance(this);
         eventList = new ArrayList<Event>();
         eventTitles = new ArrayList<String>();
         // Setting the banner welcoming the user
@@ -94,6 +95,8 @@ public class EventListActivity extends AppCompatActivity {
                         break;
                     }
                 }
+
+                listEvents.setClickable(true);
 
                 eventListAdapter.notifyDataSetChanged();
                 /*TextView txt_view = (TextView) view.findViewById(R.id.);
@@ -165,8 +168,14 @@ public class EventListActivity extends AppCompatActivity {
         super.onResume();
         loadEvents();
     }
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+    }
     public void logOut(View view)
     {
+        //possibly replace this with finish
         Intent logOutEvent = new Intent(this,LoginActivity.class);
         startActivity(logOutEvent);
     }
@@ -175,5 +184,20 @@ public class EventListActivity extends AppCompatActivity {
         Intent hostEventIntent = new Intent(this, HostEventActivity.class);
         hostEventIntent.putExtra("username", username);
         startActivity(hostEventIntent);
+    }
+    public void respondEvent(View view) {
+        Intent rsvpEvent = new Intent(this,RsvpActivity.class);
+        //EventListAdapter  ela= (EventListAdapter)(view.getParent());
+        Event event = (Event) view.getTag();
+        rsvpEvent.putExtra("eventId", event.getId());
+        startActivity(rsvpEvent);
+    }
+    public void inviteToEvent(View view)
+    {
+        Intent inviteEvent = new Intent(this,InviteFriends.class);
+        //EventListAdapter  ela= (EventListAdapter)(view.getParent());
+        Event event = (Event) view.getTag();
+        inviteEvent.putExtra("eventName", event.getName());
+        startActivity(inviteEvent);
     }
 }

@@ -52,5 +52,6 @@
         android:background="#696969"
         android:layout_alignLeft="@+id/hostEventButton"
         android:layout_alignRight="@+id/logOutButton"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:clickable="true" />
 </RelativeLayout>

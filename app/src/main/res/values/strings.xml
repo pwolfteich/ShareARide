@@ -12,6 +12,7 @@
     <string name="title_activity_event_list">EventListActivity</string>
 
     <string name="event_list_banner">Welcome %1$s! Here are your upcoming events:</string>
+    <string name="invite_to_event_banner">Invite friends to %1$s</string>
 
 
     <string name="hello_world">Hello world!</string>
@@ -22,5 +23,10 @@
     <string name="sign_up_password">Password</string>
     <string name="sign_up_reenter_password">Reenter Password</string>
     <string name="sign_up_sign_up_button">Sign Up</string>
+    <string name="title_activity_rsvp">RsvpActivity</string>
+    <string name="title_activity_invite_friends">InviteFriends</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
