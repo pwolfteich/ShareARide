@@ -25,9 +25,6 @@ import com.parse.ParseUser;
 
 import java.util.*;
 
-
-
-
 public class EventListActivity extends AppCompatActivity {
 
     String username;
@@ -159,9 +156,8 @@ public class EventListActivity extends AppCompatActivity {
     public void onResume()
     {
         super.onResume();
-        //loadEvents();
 
-
+        loadEvents();
 
         // check if user is logged in
         ParseUser user = ParseUser.getCurrentUser();
@@ -220,7 +216,7 @@ public class EventListActivity extends AppCompatActivity {
             case R.id.action_logout:
                 logOut();
                 // log out
-
+                
                 return true;
             case R.id.action_settings:
                 // settings
@@ -238,6 +234,7 @@ public class EventListActivity extends AppCompatActivity {
         loadEvents();
     }
     */
+
     public void logOut()
     {
         //possibly replace this with finish

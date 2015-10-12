@@ -12,6 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.parse.ParseException;
+import com.parse.SaveCallback;
 
 public class HostEventActivity extends AppCompatActivity {
 
@@ -97,6 +101,20 @@ public class HostEventActivity extends AppCompatActivity {
         String desc = tv.getText().toString();
         newEvent = new Event(0,name,date,loc,desc);
         dbHelper.addEvent(newEvent);
-        finish();
+        newEvent.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    finish();
+                } else {
+                    Context context = getApplicationContext();
+                    CharSequence text = "Failed to save to server.";
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+            }
+        });
+
     }
 }

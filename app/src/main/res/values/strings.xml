@@ -9,7 +9,7 @@
     <string name="sign_up_button">Sign Up</string>
 
     <string name="action_settings">Settings</string>
-    <string name="action_host">Host</string>
+    <string name="action_host">Host New Event</string>
     <string name="action_refresh">Refresh</string>
     <string name="action_logout">Log Out</string>
     <string name="title_activity_event_list">EventListActivity</string>
@@ -19,7 +19,7 @@
 
 
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_host_event">HostEventActivity</string>
+    <string name="title_activity_host_event">Host New Event</string>
 
     <string name="sign_up_action_bar">Sign Up</string>
     <string name="sign_up_email">Email</string>
@@ -27,8 +27,8 @@
     <string name="sign_up_password">Password</string>
     <string name="sign_up_reenter_password">Reenter Password</string>
     <string name="sign_up_sign_up_button">Sign Up</string>
-    <string name="title_activity_rsvp">RsvpActivity</string>
-    <string name="title_activity_invite_friends">InviteFriends</string>
+    <string name="title_activity_rsvp">RSVP</string>
+    <string name="title_activity_invite_friends">Invite Friends</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

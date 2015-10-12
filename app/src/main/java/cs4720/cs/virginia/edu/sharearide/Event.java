@@ -12,37 +12,56 @@ public class Event extends ParseObject implements Comparable {
 
     // ParseObject
 
-
     public String getName() {
+        String name = getString("name");
+        if (name == null || name.equals("")) {
+            return this.name;
+        }
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+        put("name", name);
     }
 
     public String getDate() {
+        String date = getString("date");
+        if (date == null || date.equals("")) {
+            return this.date;
+        }
         return date;
     }
 
     public void setDate(String date) {
         this.date = date;
+        put("date", date);
     }
 
     public String getLocation() {
+        String location = getString("location");
+        if (location == null || location.equals("")) {
+            return this.location;
+        }
         return location;
     }
 
     public void setLocation(String location) {
         this.location = location;
+        put("location", location);
     }
 
     public String getDescription() {
+        String description = getString("description");
+        if (description == null || description.equals("")) {
+            return this.description;
+        }
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+        put("description", description);
     }
 
     public String name;
@@ -73,12 +92,13 @@ public class Event extends ParseObject implements Comparable {
     public Event(){
 
     }
+    
     public Event(int id, String name, String date, String location, String desc){
         this.id=id;
-        this.name=name;
-        this.date=date;
-        this.location=location;
-        this.description=desc;
+        setName(name);
+        setDate(date);
+        setLocation(location);
+        setDescription(desc);
         this.expanded = false;
     }
     public String toString()
