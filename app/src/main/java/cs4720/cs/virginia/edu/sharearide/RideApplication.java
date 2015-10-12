@@ -7,6 +7,7 @@ import android.app.Application;
 import android.content.res.Configuration;
 import android.util.Log;
 import com.parse.Parse;
+import com.parse.ParseObject;
 
 public class RideApplication extends Application {
 
@@ -25,6 +26,7 @@ public class RideApplication extends Application {
 
         // Parse
         Parse.enableLocalDatastore(this);
+        ParseObject.registerSubclass(Event.class);
         Parse.initialize(this, "Sh5dYjUxshRrnA3G1uHQua4LzisHV5o8eexJXu74", "r80yIRA4BOPx3Ex9SABv5C3FVu9l39CemDkyGc3d");
     }
 

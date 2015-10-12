@@ -16,7 +16,17 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.GetCallback;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+
+import java.util.*;
+
+
+
 
 public class EventListActivity extends AppCompatActivity {
 
@@ -30,22 +40,22 @@ public class EventListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
         Intent startingIntent = getIntent();
         username = startingIntent.getStringExtra ("username");
-        //dbHelper = new EventsDbHelper(this);
-        dbHelper = EventsDbHelper.getInstance(this);
+        dbHelper = new EventsDbHelper(this);
         eventList = new ArrayList<Event>();
         eventTitles = new ArrayList<String>();
         // Setting the banner welcoming the user
-        String customBanner = getResources().getString(R.string.event_list_banner, username);
-        TextView tv = (TextView) findViewById(R.id.textView3);
-        tv.setText(customBanner);
+//        String customBanner = getResources().getString(R.string.event_list_banner, username);
+//        TextView tv = (TextView) findViewById(R.id.textView3);
+//        tv.setText(customBanner);
 
-        listEvents = (ListView) findViewById( R.id.eventsListView );
+        listEvents = (ListView) findViewById(R.id.eventsListView);
         //eventListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, eventTitles);
-        eventListAdapter = new EventListAdapter(this,eventList);
+        eventListAdapter = new EventListAdapter(this, eventList);
         loadEvents();
         // Retrieving user's events
         /*
@@ -89,7 +99,7 @@ public class EventListActivity extends AppCompatActivity {
                 Event ev = (Event) parent.getItemAtPosition(position);
                 String name = ev.toString();
                 int eventId = -1;
-                for (int ctr = 0;ctr<eventList.size();ctr++) {
+                for (int ctr = 0; ctr < eventList.size(); ctr++) {
                     if (eventList.get(ctr).getId() == ev.getId()) {
                         eventList.get(ctr).setExpanded(!ev.isExpanded());
                         break;
@@ -122,7 +132,53 @@ public class EventListActivity extends AppCompatActivity {
             }
         });
 
+//        ParseObject obj = new ParseObject("TestObject");
+//        obj.put("foo", "new object");
+//        obj.pinInBackground();
+
+//        ParseQuery<ParseObject> query = ParseQuery.getQuery("TestObject");
+//        query.whereEqualTo("foo", "new object");
+//        query.fromLocalDatastore();
+//        query.findInBackground(new FindCallback<ParseObject>() {
+//            public void done(List<ParseObject> list,
+//                             ParseException e) {
+//                if (e == null) {
+//                    Log.d("score", "Retrieved " + list.size());
+//                    ParseObject obj = list.get(0);
+//                    Log.v(EventListActivity.class.getName(), obj.getString("foo"));
+//
+//                } else {
+//                    Log.d("score", "Error: " + e.getMessage());
+//                }
+//            }
+//        });
+
     }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        //loadEvents();
+
+
+
+        // check if user is logged in
+        ParseUser user = ParseUser.getCurrentUser();
+        if (user == null) {
+            // login
+            Log.v(EventListActivity.class.getName(), "User not logged in");
+            Intent logInIntent = new Intent(this, LoginActivity.class);
+            startActivity(logInIntent);
+        } else {
+            Log.v(EventListActivity.class.getName(), "User logged in");
+
+
+        }
+    }
+
+
+
     public void loadEvents()
     {
         //eventList = dbHelper.getEvents();
@@ -143,24 +199,34 @@ public class EventListActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu; this adds items to the action bar if it is present
         getMenuInflater().inflate(R.menu.menu_event_list, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                // add
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+                return true;
+            case R.id.action_refresh:
+                // refresh
+
+                return true;
+            case R.id.action_logout:
+                // log out
+
+                return true;
+            case R.id.action_settings:
+                // settings
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
     @Override
     public void onResume()
@@ -168,17 +234,13 @@ public class EventListActivity extends AppCompatActivity {
         super.onResume();
         loadEvents();
     }
-    @Override
-    public void onPause()
-    {
-        super.onPause();
-    }
     public void logOut(View view)
     {
         //possibly replace this with finish
         Intent logOutEvent = new Intent(this,LoginActivity.class);
         startActivity(logOutEvent);
     }
+
     public void createEvent(View view) {
 
         Intent hostEventIntent = new Intent(this, HostEventActivity.class);

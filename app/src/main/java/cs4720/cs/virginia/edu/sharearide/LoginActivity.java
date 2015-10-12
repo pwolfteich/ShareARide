@@ -8,9 +8,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import com.parse.ParseObject;
+import android.content.Context;
+import android.widget.Toast;
+
+import com.parse.*;
 
 public class LoginActivity extends AppCompatActivity {
+
+    public static int SIGN_UP_SUCCEEDED = 1;
 
     static String LogTag = "LogInActivityLogTag";
 
@@ -25,16 +30,16 @@ public class LoginActivity extends AppCompatActivity {
         //Should check if previously logged in (check local dbase), and if so auto login
         //Will do with sharedPreferences
 
-        ParseObject testObject = new ParseObject("TestObject");
-        testObject.put("foo", "bar");
-        testObject.saveInBackground();
+        //ParseObject testObject = new ParseObject("TestObject");
+        //testObject.put("foo", "bar");
+        //testObject.saveInBackground();
         Log.v(LogTag, "LogInActivity saved test Parse object");
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_login, menu);
+        //getMenuInflater().inflate(R.menu.menu_login, menu);
         return true;
     }
 
@@ -58,30 +63,49 @@ public class LoginActivity extends AppCompatActivity {
 
     public void logInButtonTapped(View view) {
 
+        // get username
+        TextView usernameView = (TextView)findViewById(R.id.usernameTextView);
+        String username = usernameView.getText().toString();
+        TextView passwordView = (TextView)findViewById(R.id.passwordField);
+        String password = passwordView.getText().toString();
 
-        TextView tv = (TextView)findViewById(R.id.usernameField);
-        String username = tv.getText().toString();
-        Intent eventListIntent = new Intent(this,EventListActivity.class);
-        eventListIntent.putExtra("username",username);
-        startActivity(eventListIntent);
-        /*
-        tv.setText("");
-
-        Location currentLocation = locListener.getLastKnownLocation();
-        if (currentLocation != null) {
-            inputMessage = inputMessage + " at " + currentLocation.getLatitude() + " degrees lat, " + currentLocation.getLongitude() + " degrees long";
-        }
-        tv = (TextView) findViewById(R.id.MessageOutput);
-        tv.setText(inputMessage);
-        */
+        ParseUser.logInInBackground(username, password, new LogInCallback() {
+            public void done(ParseUser user, ParseException e) {
+                if (user != null) {
+                    // Hooray! The user is logged in.
+                    Log.v(LoginActivity.class.getName(), "User logged in.");
+                    finish();
+                } else {
+                    // Signup failed. Look at the ParseException to see what happened.
+                    // Show toast
+                    Context context = getApplicationContext();
+                    CharSequence text = "Log In Failed.";
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+            }
+        });
     }
 
     public void signUpButtonTapped(View view) {
         Log.v("LogInActivity", "Sign up button tapped");
         // start sign up activity
         Intent signUpIntent = new Intent(this, SignUpActivity.class);
-        signUpIntent.putExtra("hi", "hi");
-        startActivity(signUpIntent);
+        startActivityForResult(signUpIntent, 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == SIGN_UP_SUCCEEDED) {
+            Log.v(LoginActivity.class.getName(), "Sign up succeeded.");
+            finish();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // do nothing
     }
 
 }

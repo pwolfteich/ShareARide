@@ -1,17 +1,20 @@
 <resources>
     <string name="app_name">Share a Ride</string>
 
-    <string name="input_instruction">Please enter your usename below</string>
+    <string name="input_instruction">Please enter your username below</string>
     <string name="login_title">Welcome to Share A Ride!</string>
-    <string name="login_username">Email</string>
+    <string name="login_username">Username</string>
     <string name="login_password">Password</string>
     <string name="login_button">Log In</string>
     <string name="sign_up_button">Sign Up</string>
 
     <string name="action_settings">Settings</string>
+    <string name="action_host">Host</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_logout">Log Out</string>
     <string name="title_activity_event_list">EventListActivity</string>
 
-    <string name="event_list_banner">Welcome %1$s! Here are your upcoming events:</string>
+    <string name="event_list_banner">Your upcoming events</string>
     <string name="invite_to_event_banner">Invite friends to %1$s</string>
 
 
@@ -20,6 +23,7 @@
 
     <string name="sign_up_action_bar">Sign Up</string>
     <string name="sign_up_email">Email</string>
+    <string name="sign_up_username">Username</string>
     <string name="sign_up_password">Password</string>
     <string name="sign_up_reenter_password">Reenter Password</string>
     <string name="sign_up_sign_up_button">Sign Up</string>
