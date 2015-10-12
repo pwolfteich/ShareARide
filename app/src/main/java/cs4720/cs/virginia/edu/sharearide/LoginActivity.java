@@ -73,6 +73,7 @@ public class LoginActivity extends AppCompatActivity {
             public void done(ParseUser user, ParseException e) {
                 if (user != null) {
                     // Hooray! The user is logged in.
+                    Log.v(LoginActivity.class.getName(), "User logged in.");
                     finish();
                 } else {
                     // Signup failed. Look at the ParseException to see what happened.

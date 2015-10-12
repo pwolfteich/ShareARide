@@ -49,90 +49,90 @@ public class EventListActivity extends AppCompatActivity {
 
 //        Intent startingIntent = getIntent();
 //        username = startingIntent.getStringExtra("username");
-//        dbHelper = new EventsDbHelper(this);
-//        eventList = new ArrayList<Event>();
-//        eventTitles = new ArrayList<String>();
-//        // Setting the banner welcoming the user
+        dbHelper = new EventsDbHelper(this);
+        eventList = new ArrayList<Event>();
+        eventTitles = new ArrayList<String>();
+        // Setting the banner welcoming the user
 //        String customBanner = getResources().getString(R.string.event_list_banner, username);
 //        TextView tv = (TextView) findViewById(R.id.textView3);
 //        tv.setText(customBanner);
-//
-//        listEvents = (ListView) findViewById(R.id.eventsListView);
-//        //eventListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, eventTitles);
-//        eventListAdapter = new EventListAdapter(this, eventList);
-//        loadEvents();
-//        // Retrieving user's events
-//        /*
-//        eventListAdapter = new ArrayAdapter<String>(this,
-//                android.R.layout.simple_list_item_1, eventTitles);
-//        listEvents.setAdapter(eventListAdapter);*/
-//        listEvents.setLongClickable(true);
-//        listEvents.setClickable(true);
-//        listEvents.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//
-//            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-//                                           int pos, long id) {
-//                // TODO Auto-generated method stub
-//                //TextView tv = (TextView) ((ListView) arg0).getChildAt(pos);
-//                //String name = tv.getText().toString();
-//                Event ev = (Event) arg0.getItemAtPosition(pos);
-//                String name = ev.toString();
-//                int eventId = -1;
-//                for (Event e : eventList) {
-//                    if (e.getName().equals(name)) {
-//                        eventId = e.getId();
-//                        break;
-//                    }
-//                }
-//                if (eventId == -1) {
-//
-//                    Log.e("No id found", "Event named " + name + " did not have a corresponding name in the database");
-//                } else {
-//                    dbHelper.deleteEvent(eventId);
-//                    loadEvents();
-//                }
-//                return true;
-//            }
-//        });
-//        listEvents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view,
-//                                    int position, long id) {
-//
-//                Event ev = (Event) parent.getItemAtPosition(position);
-//                String name = ev.toString();
-//                int eventId = -1;
-//                for (int ctr = 0; ctr < eventList.size(); ctr++) {
-//                    if (eventList.get(ctr).getId() == ev.getId()) {
-//                        eventList.get(ctr).setExpanded(!ev.isExpanded());
-//                        break;
-//                    }
-//                }
-//
-//                eventListAdapter.notifyDataSetChanged();
-//                /*TextView txt_view = (TextView) view.findViewById(R.id.);
-//
-//                txt_view.setVisibility(View.GONE);
-//
-//                RelativeLayout rl_inflate = (RelativeLayout) view.findViewById(R.id.
-//                View child = getLayoutInflater().inflate(R.layout.inflate);
-//                rl_inflate.addView(child);
-//
-///*
-//                Button my_btn = (Button) child.findViewById(R.id.btn_replace);
-//                EditText enter_txt = (EditText) child.findViewById(R.id.enter_txt);
-//
-//                my_btn.setOnClickListener(new View.OnClickListener() {
-//
-//                    @Override
-//                    public void onClick(View v) {
-//                        txt_view.setText(enter_txt.getText().toString());
-//                        txt_view.setVisibility(View.VISIBLE);
-//                    }
-//                });*/
-//            }
-//        });
+
+        listEvents = (ListView) findViewById(R.id.eventsListView);
+        //eventListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, eventTitles);
+        eventListAdapter = new EventListAdapter(this, eventList);
+        loadEvents();
+        // Retrieving user's events
+        /*
+        eventListAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, eventTitles);
+        listEvents.setAdapter(eventListAdapter);*/
+        listEvents.setLongClickable(true);
+        listEvents.setClickable(true);
+        listEvents.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+                                           int pos, long id) {
+                // TODO Auto-generated method stub
+                //TextView tv = (TextView) ((ListView) arg0).getChildAt(pos);
+                //String name = tv.getText().toString();
+                Event ev = (Event) arg0.getItemAtPosition(pos);
+                String name = ev.toString();
+                int eventId = -1;
+                for (Event e : eventList) {
+                    if (e.getName().equals(name)) {
+                        eventId = e.getId();
+                        break;
+                    }
+                }
+                if (eventId == -1) {
+
+                    Log.e("No id found", "Event named " + name + " did not have a corresponding name in the database");
+                } else {
+                    dbHelper.deleteEvent(eventId);
+                    loadEvents();
+                }
+                return true;
+            }
+        });
+        listEvents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+
+                Event ev = (Event) parent.getItemAtPosition(position);
+                String name = ev.toString();
+                int eventId = -1;
+                for (int ctr = 0; ctr < eventList.size(); ctr++) {
+                    if (eventList.get(ctr).getId() == ev.getId()) {
+                        eventList.get(ctr).setExpanded(!ev.isExpanded());
+                        break;
+                    }
+                }
+
+                eventListAdapter.notifyDataSetChanged();
+                /*TextView txt_view = (TextView) view.findViewById(R.id.);
+
+                txt_view.setVisibility(View.GONE);
+
+                RelativeLayout rl_inflate = (RelativeLayout) view.findViewById(R.id.
+                View child = getLayoutInflater().inflate(R.layout.inflate);
+                rl_inflate.addView(child);
+
+/*
+                Button my_btn = (Button) child.findViewById(R.id.btn_replace);
+                EditText enter_txt = (EditText) child.findViewById(R.id.enter_txt);
+
+                my_btn.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        txt_view.setText(enter_txt.getText().toString());
+                        txt_view.setVisibility(View.VISIBLE);
+                    }
+                });*/
+            }
+        });
 
 //        ParseObject obj = new ParseObject("TestObject");
 //        obj.put("foo", "new object");
@@ -163,6 +163,8 @@ public class EventListActivity extends AppCompatActivity {
         super.onResume();
         //loadEvents();
 
+
+
         // check if user is logged in
         ParseUser user = ParseUser.getCurrentUser();
         if (user == null) {
@@ -172,6 +174,8 @@ public class EventListActivity extends AppCompatActivity {
             startActivity(logInIntent);
         } else {
             Log.v(EventListActivity.class.getName(), "User logged in");
+
+
         }
     }
 
@@ -197,27 +201,35 @@ public class EventListActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu; this adds items to the action bar if it is present
         getMenuInflater().inflate(R.menu.menu_event_list, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                // add
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+                return true;
+            case R.id.action_refresh:
+                // refresh
+
+                return true;
+            case R.id.action_logout:
+                // log out
+
+                return true;
+            case R.id.action_settings:
+                // settings
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
-
-
 
     public void logOut(View view)
     {
