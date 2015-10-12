@@ -66,6 +66,15 @@ public class Event extends ParseObject implements Comparable {
         put("description", description);
     }
 
+    public ParseUser getHost() {
+        ParseUser host = (ParseUser)get("host");
+        return host;
+    }
+
+    public void setHost(ParseUser host) {
+        put("host", host);
+    }
+
     public String name;
     public String date;
     public String location;

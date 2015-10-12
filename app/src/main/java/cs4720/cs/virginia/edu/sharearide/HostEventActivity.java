@@ -14,7 +14,9 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 public class HostEventActivity extends AppCompatActivity {
@@ -24,6 +26,8 @@ public class HostEventActivity extends AppCompatActivity {
     gpsListener locListener;
     LocationManager locationManager;
     String oldLocation;
+
+    Event newEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +94,6 @@ public class HostEventActivity extends AppCompatActivity {
 
     public void makeEvent(View view)
     {
-        Event newEvent;
         TextView tv = (TextView)findViewById(R.id.editText2);
         String name = tv.getText().toString();
         tv = (TextView)findViewById(R.id.editText3);
@@ -100,11 +103,13 @@ public class HostEventActivity extends AppCompatActivity {
         tv = (TextView)findViewById(R.id.editText5);
         String desc = tv.getText().toString();
         newEvent = new Event(0,name,date,loc,desc);
-        dbHelper.addEvent(newEvent);
+        newEvent.setHost(ParseUser.getCurrentUser());
+
         newEvent.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
+                    dbHelper.addEvent(newEvent);
                     finish();
                 } else {
                     Context context = getApplicationContext();
