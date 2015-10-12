@@ -117,8 +117,9 @@ public class InviteFriends extends AppCompatActivity {
         }
     }
 
-        invitedFriends.add("First friend");*/
-        friendsList = friendHelper.readFriends();
+        //invitedFriends.add("First friend");*/
+        //friendsList = friendHelper.readFriends();
+
     public void loadListView() {
 
         ParseUser currentUser = ParseUser.getCurrentUser();
@@ -194,7 +195,7 @@ public class InviteFriends extends AppCompatActivity {
             });
         }
         inviteAdapter.notifyDataSetChanged();
-        friendHelper.addFriend(newFriend);
+        friendHelper.addFriend(newFriendName);
     }
 
     public void addNewFriend(ParseUser friend) {
