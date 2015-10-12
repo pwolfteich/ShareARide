@@ -1,7 +1,11 @@
 package cs4720.cs.virginia.edu.sharearide;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.Sensor;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -33,6 +38,8 @@ public class EventListActivity extends AppCompatActivity {
     EventsDbHelper dbHelper;
     ListView listEvents;
     EventListAdapter eventListAdapter;
+    SensorManager isShaken;
+    SensorEventListener accelerometer;
 
 
     @Override
@@ -41,10 +48,16 @@ public class EventListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
         Intent startingIntent = getIntent();
-        username = startingIntent.getStringExtra ("username");
+        username = startingIntent.getStringExtra("username");
         dbHelper = EventsDbHelper.getInstance(this);
         eventList = new ArrayList<Event>();
         eventTitles = new ArrayList<String>();
+
+        //TODO unregister and reregister on pause and resume
+        accelerometer = new ShakeListener(this);
+        isShaken = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        isShaken.registerListener(accelerometer ,isShaken.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+
         // Setting the banner welcoming the user
 //        String customBanner = getResources().getString(R.string.event_list_banner, username);
 //        TextView tv = (TextView) findViewById(R.id.textView3);
@@ -172,8 +185,17 @@ public class EventListActivity extends AppCompatActivity {
 
         }
     }
+    public void onShake()
+    {
+        Toast toast = Toast.makeText(getApplicationContext(), "Device has shaken.", Toast.LENGTH_LONG);
+        toast.show();
+        this.refreshEvents();
+    }
 
+    public void refreshEvents()
+    {
 
+    }
 
     public void loadEvents()
     {
@@ -210,6 +232,7 @@ public class EventListActivity extends AppCompatActivity {
 
                 return true;
             case R.id.action_refresh:
+                refreshEvents();
                 // refresh
 
                 return true;
