@@ -7,9 +7,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.content.Context;
 import android.widget.Toast;
+import android.widget.Button;
 
 import com.parse.*;
 
@@ -63,6 +65,13 @@ public class LoginActivity extends AppCompatActivity {
 
     public void logInButtonTapped(View view) {
 
+        // make button unclickable
+        Button logInButton = (Button)findViewById(R.id.loginButton);
+        logInButton.setEnabled(false);
+        // make progress bar visible
+        ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBarLogIn);
+        progressBar.setVisibility(View.VISIBLE);
+
         // get username
         TextView usernameView = (TextView)findViewById(R.id.usernameTextView);
         String username = usernameView.getText().toString();
@@ -71,6 +80,14 @@ public class LoginActivity extends AppCompatActivity {
 
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             public void done(ParseUser user, ParseException e) {
+
+                // set button clickable again
+                Button logInButton = (Button)findViewById(R.id.loginButton);
+                logInButton.setEnabled(true);
+                // make progress bar invisible
+                ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBarLogIn);
+                progressBar.setVisibility(View.INVISIBLE);
+
                 if (user != null) {
                     // Hooray! The user is logged in.
                     Log.v(LoginActivity.class.getName(), "User logged in.");

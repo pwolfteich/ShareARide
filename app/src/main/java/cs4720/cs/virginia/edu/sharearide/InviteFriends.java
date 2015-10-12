@@ -1,18 +1,33 @@
 package cs4720.cs.virginia.edu.sharearide;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 public class InviteFriends extends AppCompatActivity {
 
@@ -20,6 +35,9 @@ public class InviteFriends extends AppCompatActivity {
     ArrayList<String> invitedFriends;
     InviteListAdapter inviteAdapter;
     FriendStorageHelper friendHelper;
+
+    int friendFetchCount = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,13 +64,39 @@ public class InviteFriends extends AppCompatActivity {
 
     public void loadFriends()
     {
-        /*
-        friendsList.clear();
-        friendsList.add("First friend");
-        friendsList.add("second Friend");
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        ArrayList<ParseUser> friends = (ArrayList<ParseUser>)currentUser.get("friends");
+        for (ParseUser user : friends) {
+            user.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject parseObject, ParseException e) {
+                    // one more friend fetched
+                    friendFetchCount++;
+                    // check if all friends are fetched
+                    ParseUser currentUser = ParseUser.getCurrentUser();
+                    ArrayList<ParseUser> friends = (ArrayList<ParseUser>)currentUser.get("friends");
+                    // if all friends fetched
+                    // update UI
+                    if (friendFetchCount == friends.size()) {
+                        loadListView();
+                    }
+                }
+            });
+        }
+    }
 
         invitedFriends.add("First friend");*/
         friendsList = friendHelper.readFriends();
+    public void loadListView() {
+
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        ArrayList<ParseUser> friends = (ArrayList<ParseUser>)currentUser.get("friends");
+        for (int i = 0; i < friends.size(); i++) {
+            ParseUser friend = friends.get(i);
+            friendsList.add(friend.getUsername());
+        }
+        ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -80,14 +124,67 @@ public class InviteFriends extends AppCompatActivity {
     public void addFriend(View view)
     {
         TextView tv = (TextView) findViewById(R.id.editText6);
-        String newFriend = tv.getText().toString();
-        /*if(!friendsList.contains(newFriend))
+        String newFriendName = tv.getText().toString();
+        if (!friendsList.contains(newFriendName))
         {
-            friendsList.add(newFriend);
-        }*/
+            //friendsList.add(newFriend);
+            ParseQuery<ParseUser> query = ParseUser.getQuery();
+            query.whereEqualTo("username", newFriendName);
+            query.findInBackground(new FindCallback<ParseUser>() {
+                @Override
+                public void done(List<ParseUser> list, ParseException e) {
+                    if (e == null) {
+                        Context context = getApplicationContext();
+                        CharSequence text = "";
+                        int duration = Toast.LENGTH_SHORT;
+
+                        if (list.size() == 0) {
+                            text = "Nobody with that username.";
+                        } else if (list.size() == 1) {
+                            text = "Found friend!";
+                            // add friend to database
+                            ParseUser friend = list.get(0);
+                            addNewFriend(friend);
+                        } else {
+                            text = "More than one friend with that username.";
+                        }
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                    } else {
+
+                    }
+                }
+            });
+        }
         inviteAdapter.notifyDataSetChanged();
         friendHelper.addFriend(newFriend);
     }
+
+    public void addNewFriend(ParseUser friend) {
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        ArrayList<ParseUser> friends = (ArrayList<ParseUser>)currentUser.get("friends");
+        friends.add(friend);
+        currentUser.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                Context context = getApplicationContext();
+                CharSequence text;
+                int duration = Toast.LENGTH_SHORT;
+                if (e == null) {
+                    text = "Added friend!";
+                    TextView textView = (TextView)findViewById(R.id.editText6);
+                    textView.setText("");
+                } else {
+                    text = "Failed to add friend :(";
+                }
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+            }
+        });
+        // add friend to database
+
+    }
+
     public void invite(View view)
     {
         String name =(String) view.getTag();

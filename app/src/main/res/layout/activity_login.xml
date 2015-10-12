@@ -17,7 +17,8 @@
         android:layout_marginEnd="32dp"
         android:layout_below="@+id/passwordField"
         android:layout_alignRight="@+id/textView2"
-        android:layout_alignEnd="@+id/textView2" />
+        android:layout_alignEnd="@+id/textView2"
+        android:visibility="visible" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -88,5 +89,14 @@
         android:layout_below="@+id/passwordField"
         android:layout_alignLeft="@+id/textView2"
         android:layout_alignStart="@+id/textView2" />
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBarLogIn"
+        android:layout_below="@+id/loginButton"
+        android:layout_centerHorizontal="true"
+        android:indeterminate="true"
+        android:visibility="invisible" />
 
 </RelativeLayout>

@@ -260,6 +260,10 @@ public class EventListActivity extends AppCompatActivity {
 
     public void logOut()
     {
+        // remove database
+
+        // log out of parse
+        ParseUser.logOut();
         //possibly replace this with finish
 
         FriendStorageHelper friendHelper = new FriendStorageHelper("friends",this);

@@ -6,6 +6,8 @@ package cs4720.cs.virginia.edu.sharearide;
 
 import com.parse.ParseObject;
 import com.parse.ParseClassName;
+import com.parse.ParseUser;
+import java.util.ArrayList;
 
 @ParseClassName("Event")
 public class Event extends ParseObject implements Comparable {
@@ -64,10 +66,20 @@ public class Event extends ParseObject implements Comparable {
         put("description", description);
     }
 
+    public ParseUser getHost() {
+        ParseUser host = (ParseUser)get("host");
+        return host;
+    }
+
+    public void setHost(ParseUser host) {
+        put("host", host);
+    }
+
     public String name;
     public String date;
     public String location;
     public String description;
+    public ArrayList<ParseUser> invitees = new ArrayList<>();
 
     public int getId() {
         return id;
@@ -89,10 +101,10 @@ public class Event extends ParseObject implements Comparable {
 
     public boolean expanded;
 
-    public Event(){
+    public Event() {
 
     }
-    
+
     public Event(int id, String name, String date, String location, String desc){
         this.id=id;
         setName(name);
