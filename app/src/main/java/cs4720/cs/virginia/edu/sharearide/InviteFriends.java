@@ -37,6 +37,7 @@ public class InviteFriends extends AppCompatActivity {
     ArrayList<String> friendsList;
     ArrayList<String> invitedFriends;
     InviteListAdapter inviteAdapter;
+    FriendStorageHelper friendHelper;
 
     ArrayList<ParseUser> friendUserList;
     ArrayList<ParseUser> invitedFriendUserList;
@@ -59,6 +60,7 @@ public class InviteFriends extends AppCompatActivity {
         tv.setText(customBanner);
         friendsList = new ArrayList<String>();
         invitedFriends = new ArrayList<String>();
+        friendHelper = new FriendStorageHelper("friends",this);
 
         friendUserList = new ArrayList<ParseUser>();
         invitedFriendUserList = new ArrayList<ParseUser>();
@@ -115,6 +117,8 @@ public class InviteFriends extends AppCompatActivity {
         }
     }
 
+        invitedFriends.add("First friend");*/
+        friendsList = friendHelper.readFriends();
     public void loadListView() {
 
         ParseUser currentUser = ParseUser.getCurrentUser();
@@ -190,6 +194,7 @@ public class InviteFriends extends AppCompatActivity {
             });
         }
         inviteAdapter.notifyDataSetChanged();
+        friendHelper.addFriend(newFriend);
     }
 
     public void addNewFriend(ParseUser friend) {

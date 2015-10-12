@@ -253,6 +253,9 @@ public class EventListActivity extends AppCompatActivity {
         // log out of parse
         ParseUser.logOut();
         //possibly replace this with finish
+
+        FriendStorageHelper friendHelper = new FriendStorageHelper("friends",this);
+        friendHelper.deleteFile();
         Intent logOutEvent = new Intent(this,LoginActivity.class);
         startActivity(logOutEvent);
     }
