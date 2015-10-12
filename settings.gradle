@@ -1,2 +1,2 @@
-include ':app', ':ParseUI-Login'
+include ':ParseUI-Login', ':app'
 project(':ParseUI-Login').projectDir = new File('app/libs/ParseUI-Login')

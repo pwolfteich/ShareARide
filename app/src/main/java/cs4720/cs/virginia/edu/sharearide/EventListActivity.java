@@ -45,7 +45,7 @@ public class EventListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_list);
         Intent startingIntent = getIntent();
         username = startingIntent.getStringExtra ("username");
-        dbHelper = new EventsDbHelper(this);
+        dbHelper = EventsDbHelper.getInstance(this);
         eventList = new ArrayList<Event>();
         eventTitles = new ArrayList<String>();
         // Setting the banner welcoming the user
@@ -209,6 +209,7 @@ public class EventListActivity extends AppCompatActivity {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_add:
+                createEvent();
                 // add
 
                 return true;
@@ -217,6 +218,7 @@ public class EventListActivity extends AppCompatActivity {
 
                 return true;
             case R.id.action_logout:
+                logOut();
                 // log out
 
                 return true;
@@ -228,23 +230,25 @@ public class EventListActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+    /*
     @Override
     public void onResume()
     {
         super.onResume();
         loadEvents();
     }
-    public void logOut(View view)
+    */
+    public void logOut()
     {
         //possibly replace this with finish
         Intent logOutEvent = new Intent(this,LoginActivity.class);
         startActivity(logOutEvent);
     }
 
-    public void createEvent(View view) {
+    public void createEvent() {
 
         Intent hostEventIntent = new Intent(this, HostEventActivity.class);
-        hostEventIntent.putExtra("username", username);
+
         startActivity(hostEventIntent);
     }
     public void respondEvent(View view) {
