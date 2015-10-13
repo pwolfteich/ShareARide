@@ -135,7 +135,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your driver/riders"
+        android:text="Ride info..."
         android:id="@+id/rideInfoTextView"
         android:layout_below="@+id/seatsField"
         android:layout_toLeftOf="@+id/seatsField"
