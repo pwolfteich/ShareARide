@@ -26,7 +26,9 @@ public class RsvpActivity extends AppCompatActivity {
         int id = startingIntent.getIntExtra("eventId", -1);
         //dbHelper = new EventsDbHelper(this);
         dbHelper = EventsDbHelper.getInstance(this);
-        event = dbHelper.getEvent(id);
+        //event = dbHelper.getEvent(id);
+        RideApplication app = (RideApplication)getApplication();
+        event = app.getCurrentEvent();
 
         prefs = this.getSharedPreferences("rsvp", Context.MODE_PRIVATE);
         if (prefs.contains("Response"))
