@@ -117,6 +117,8 @@ public class HostEventActivity extends AppCompatActivity {
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
+                    Log.e(HostEventActivity.class.getName(), e.getLocalizedMessage());
+                    e.printStackTrace();
                 }
             }
         });

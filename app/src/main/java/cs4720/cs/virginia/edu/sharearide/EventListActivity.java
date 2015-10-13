@@ -16,11 +16,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.GetCallback;
@@ -41,6 +43,7 @@ public class EventListActivity extends AppCompatActivity {
     SensorManager isShaken;
     SensorEventListener accelerometer;
 
+    int chosenCellIndex = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +59,7 @@ public class EventListActivity extends AppCompatActivity {
         //TODO unregister and reregister on pause and resume
         accelerometer = new ShakeListener(this);
         isShaken = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        isShaken.registerListener(accelerometer ,isShaken.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        isShaken.registerListener(accelerometer, isShaken.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
 
         // Setting the banner welcoming the user
 //        String customBanner = getResources().getString(R.string.event_list_banner, username);
@@ -100,6 +103,7 @@ public class EventListActivity extends AppCompatActivity {
                 return true;
             }
         });
+
         listEvents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -110,59 +114,93 @@ public class EventListActivity extends AppCompatActivity {
                 String name = ev.toString();
                 int eventId = -1;
                 for (int ctr = 0; ctr < eventList.size(); ctr++) {
-                    if (eventList.get(ctr).getId() == ev.getId()) {
-                        eventList.get(ctr).setExpanded(!ev.isExpanded());
-                        break;
+
+                    if (eventList.get(ctr).getName().equals(ev.getName())) {
+                        if (!ev.isExpanded()) {
+                            eventList.get(ctr).setExpanded(true);
+                            chosenCellIndex = ctr;
+                        } else {
+                            eventList.get(ctr).setExpanded(false);
+                            chosenCellIndex = -1;
+                        }
+                    } else {
+                        eventList.get(ctr).setExpanded(false);
                     }
+
                 }
 
                 listEvents.setClickable(true);
 
                 eventListAdapter.notifyDataSetChanged();
-                /*TextView txt_view = (TextView) view.findViewById(R.id.);
-
-                txt_view.setVisibility(View.GONE);
-
-                RelativeLayout rl_inflate = (RelativeLayout) view.findViewById(R.id.
-                View child = getLayoutInflater().inflate(R.layout.inflate);
-                rl_inflate.addView(child);
-
-/*
-                Button my_btn = (Button) child.findViewById(R.id.btn_replace);
-                EditText enter_txt = (EditText) child.findViewById(R.id.enter_txt);
-
-                my_btn.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        txt_view.setText(enter_txt.getText().toString());
-                        txt_view.setVisibility(View.VISIBLE);
-                    }
-                });*/
             }
         });
 
-//        ParseObject obj = new ParseObject("TestObject");
-//        obj.put("foo", "new object");
-//        obj.pinInBackground();
+    }
 
-//        ParseQuery<ParseObject> query = ParseQuery.getQuery("TestObject");
-//        query.whereEqualTo("foo", "new object");
-//        query.fromLocalDatastore();
-//        query.findInBackground(new FindCallback<ParseObject>() {
-//            public void done(List<ParseObject> list,
-//                             ParseException e) {
-//                if (e == null) {
-//                    Log.d("score", "Retrieved " + list.size());
-//                    ParseObject obj = list.get(0);
-//                    Log.v(EventListActivity.class.getName(), obj.getString("foo"));
-//
-//                } else {
-//                    Log.d("score", "Error: " + e.getMessage());
-//                }
-//            }
-//        });
+    public void fetchEvents() {
 
+        // fetch events from the server
+        // that have the current user
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        // as an invitee, passenger, driver, or host
+        ParseQuery<ParseObject> isInvitee = ParseQuery.getQuery("Event");
+        isInvitee.whereEqualTo("invitees", currentUser);
+        ParseQuery<ParseObject> isPassenger = ParseQuery.getQuery("Event");
+        isPassenger.whereEqualTo("passengers", currentUser);
+        ParseQuery<ParseObject> isDriver = ParseQuery.getQuery("Event");
+        isDriver.whereEqualTo("drivers", currentUser);
+        ParseQuery<ParseObject> isHost = ParseQuery.getQuery("Event");
+        isHost.whereEqualTo("host", currentUser);
+
+        // combine all conditions
+        List<ParseQuery<ParseObject>> queries = new ArrayList<>();
+        queries.add(isInvitee);
+        queries.add(isPassenger);
+        queries.add(isDriver);
+        queries.add(isHost);
+
+        // query for events
+        ParseQuery<ParseObject> query = ParseQuery.or(queries);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null) { // success
+
+                    // update events
+                    updateEvents(list);
+
+                    Toast toast = Toast.makeText(getApplicationContext(), "Fetched events!",
+                            Toast.LENGTH_SHORT);
+                    toast.show();
+
+                } else { // error
+                    Log.e(EventListActivity.class.getName(), "Failed to get events from server.");
+                    Toast toast = Toast.makeText(getApplicationContext(), "Failed to fetch events from the server",
+                            Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            }
+        });
+    }
+
+    public void updateEvents(List<ParseObject> list) {
+
+        for (ParseObject obj : list) {
+            Log.v(EventListActivity.class.getName(), "Events from the cloud " + obj.get("name") + " " + obj.getObjectId());
+        }
+        for (Event e : eventList) {
+            Log.v(EventListActivity.class.getName(), "Events from the database " + e.get("name") + " " + e.getObjectId());
+        }
+        // merge list with current list
+        // actually, just replace the current list
+        eventList.clear();
+        for (ParseObject obj : list) {
+            // get new event
+            Event newEvent = (Event)obj;
+            eventList.add(newEvent);
+        }
+        // notify event list adapter
+        eventListAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -171,6 +209,7 @@ public class EventListActivity extends AppCompatActivity {
         super.onResume();
 
         loadEvents();
+        fetchEvents();
 
         // check if user is logged in
         ParseUser user = ParseUser.getCurrentUser();
@@ -182,7 +221,24 @@ public class EventListActivity extends AppCompatActivity {
         } else {
             Log.v(EventListActivity.class.getName(), "User logged in");
 
+            // refresh user
+            user.fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject parseObject, ParseException e) {
+                    if (e == null) {
+                        ParseUser user = (ParseUser)parseObject;
+                        Log.v(EventListActivity.class.getName(), "Refreshed user with objectId " + user.getObjectId());
 
+                        ArrayList<ParseUser> friends = (ArrayList<ParseUser>)user.get("friends");
+                        for (ParseUser friend : friends) {
+                            Log.v(EventListActivity.class.getName(), friend.getObjectId());
+                        }
+
+                    } else {
+                        Log.e(EventListActivity.class.getName(), "Error refreshing user.");
+                    }
+                }
+            });
         }
     }
     public void onShake()
@@ -194,7 +250,7 @@ public class EventListActivity extends AppCompatActivity {
 
     public void refreshEvents()
     {
-
+        fetchEvents();
     }
 
     public void loadEvents()
@@ -279,19 +335,34 @@ public class EventListActivity extends AppCompatActivity {
 
         startActivity(hostEventIntent);
     }
+
     public void respondEvent(View view) {
         Intent rsvpEvent = new Intent(this,RsvpActivity.class);
         //EventListAdapter  ela= (EventListAdapter)(view.getParent());
-        Event event = (Event) view.getTag();
+        Event event = eventList.get(chosenCellIndex);
+        Log.v(EventListActivity.class.getName(), "RSVP to event: " + event);
+        // set event as the current event
+        RideApplication app = (RideApplication)getApplication();
+        app.setCurrentEvent(event);
+        // add to intent
         rsvpEvent.putExtra("eventId", event.getId());
         startActivity(rsvpEvent);
     }
+
     public void inviteToEvent(View view)
     {
-        Intent inviteEvent = new Intent(this,InviteFriends.class);
-        //EventListAdapter  ela= (EventListAdapter)(view.getParent());
-        Event event = (Event) view.getTag();
+        Intent inviteEvent = new Intent(this, InviteFriends.class);
+        // index is the chosen cell index
+        // get the event
+        Event event = eventList.get(chosenCellIndex);
+        Log.v(EventListActivity.class.getName(), "Invite to event: " + event);
+        // set event as the current event
+        RideApplication app = (RideApplication)getApplication();
+        app.setCurrentEvent(event);
+        //Log.v(EventListActivity.class.getName(), event.getObjectId());
+        // add to intent
         inviteEvent.putExtra("eventName", event.getName());
         startActivity(inviteEvent);
     }
+    
 }

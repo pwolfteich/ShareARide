@@ -4,6 +4,7 @@ package cs4720.cs.virginia.edu.sharearide;
  * Created by McNulty-PC on 9/29/2015.
  */
 
+import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseClassName;
 import com.parse.ParseUser;
@@ -79,7 +80,22 @@ public class Event extends ParseObject implements Comparable {
     public String date;
     public String location;
     public String description;
-    public ArrayList<ParseUser> invitees = new ArrayList<>();
+
+    public ArrayList<ParseUser> getInvitees() {
+        ArrayList<ParseUser> invitees = (ArrayList<ParseUser>)get("invitees");
+        if (invitees == null) {
+            return this.invitees;
+        } else {
+            return invitees;
+        }
+    }
+
+    public void setInvitees(ArrayList<ParseUser> invitees) {
+        this.invitees = invitees;
+        put("invitees", invitees);
+    }
+
+    public ArrayList<ParseUser> invitees;
 
     public int getId() {
         return id;
@@ -111,6 +127,8 @@ public class Event extends ParseObject implements Comparable {
         setDate(date);
         setLocation(location);
         setDescription(desc);
+        invitees = new ArrayList<ParseUser>();
+        setInvitees(new ArrayList<ParseUser>());
         this.expanded = false;
     }
     public String toString()
