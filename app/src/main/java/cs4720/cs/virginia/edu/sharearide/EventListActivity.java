@@ -115,7 +115,7 @@ public class EventListActivity extends AppCompatActivity {
                 int eventId = -1;
                 for (int ctr = 0; ctr < eventList.size(); ctr++) {
 
-                    if (eventList.get(ctr).getId() == ev.getId()) {
+                    if (eventList.get(ctr).getName().equals(ev.getName())) {
                         if (!ev.isExpanded()) {
                             eventList.get(ctr).setExpanded(true);
                             chosenCellIndex = ctr;
@@ -363,17 +363,5 @@ public class EventListActivity extends AppCompatActivity {
         inviteEvent.putExtra("eventName", event.getName());
         startActivity(inviteEvent);
     }
-
-    public View getViewByPosition(int pos, ListView listView) {
-        final int firstListItemPosition = listView.getFirstVisiblePosition();
-        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
-
-        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
-            return listView.getAdapter().getView(pos, null, listView);
-        } else {
-            final int childIndex = pos - firstListItemPosition;
-            return listView.getChildAt(childIndex);
-        }
-    }
-
+    
 }
