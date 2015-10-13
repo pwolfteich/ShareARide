@@ -22,6 +22,7 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import android.widget.Button;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RsvpActivity extends AppCompatActivity {
@@ -274,6 +275,7 @@ public class RsvpActivity extends AppCompatActivity {
         Ride ride = new Ride();
         ride.setDriver(ParseUser.getCurrentUser());
         ride.setSeats(seats);
+        ride.setPassengers(new ArrayList<ParseUser>());
         ride.setEvent(event);
         ride.saveInBackground(new SaveCallback() {
             @Override
