@@ -22,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.GetCallback;
@@ -58,7 +59,7 @@ public class EventListActivity extends AppCompatActivity {
         //TODO unregister and reregister on pause and resume
         accelerometer = new ShakeListener(this);
         isShaken = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        isShaken.registerListener(accelerometer ,isShaken.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        isShaken.registerListener(accelerometer, isShaken.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
 
         // Setting the banner welcoming the user
 //        String customBanner = getResources().getString(R.string.event_list_banner, username);
@@ -136,12 +137,79 @@ public class EventListActivity extends AppCompatActivity {
 
     }
 
+    public void fetchEvents() {
+
+        // fetch events from the server
+        // that have the current user
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        // as an invitee, passenger, driver, or host
+        ParseQuery<ParseObject> isInvitee = ParseQuery.getQuery("Event");
+        isInvitee.whereEqualTo("invitees", currentUser);
+        ParseQuery<ParseObject> isPassenger = ParseQuery.getQuery("Event");
+        isPassenger.whereEqualTo("passengers", currentUser);
+        ParseQuery<ParseObject> isDriver = ParseQuery.getQuery("Event");
+        isDriver.whereEqualTo("drivers", currentUser);
+        ParseQuery<ParseObject> isHost = ParseQuery.getQuery("Event");
+        isHost.whereEqualTo("host", currentUser);
+
+        // combine all conditions
+        List<ParseQuery<ParseObject>> queries = new ArrayList<>();
+        queries.add(isInvitee);
+        queries.add(isPassenger);
+        queries.add(isDriver);
+        queries.add(isHost);
+
+        // query for events
+        ParseQuery<ParseObject> query = ParseQuery.or(queries);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null) { // success
+
+                    // update events
+                    updateEvents(list);
+
+                    Toast toast = Toast.makeText(getApplicationContext(), "Fetched events!",
+                            Toast.LENGTH_SHORT);
+                    toast.show();
+
+                } else { // error
+                    Log.e(EventListActivity.class.getName(), "Failed to get events from server.");
+                    Toast toast = Toast.makeText(getApplicationContext(), "Failed to fetch events from the server",
+                            Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            }
+        });
+    }
+
+    public void updateEvents(List<ParseObject> list) {
+
+        for (ParseObject obj : list) {
+            Log.v(EventListActivity.class.getName(), "Events from the cloud " + obj.get("name") + " " + obj.getObjectId());
+        }
+        for (Event e : eventList) {
+            Log.v(EventListActivity.class.getName(), "Events from the database " + e.get("name") + " " + e.getObjectId());
+        }
+        // merge list with current list
+        // actually, just replace the current list
+        eventList.clear();
+        for (ParseObject obj : list) {
+            // get new event
+            Event newEvent = (Event)obj;
+            eventList.add(newEvent);
+        }
+        // notify event list adapter
+        eventListAdapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onResume()
     {
         super.onResume();
 
         loadEvents();
+        fetchEvents();
 
         // check if user is logged in
         ParseUser user = ParseUser.getCurrentUser();
@@ -182,7 +250,7 @@ public class EventListActivity extends AppCompatActivity {
 
     public void refreshEvents()
     {
-
+        fetchEvents();
     }
 
     public void loadEvents()
