@@ -6,11 +6,19 @@ import android.content.SharedPreferences;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+import android.widget.Button;
 
 public class RsvpActivity extends AppCompatActivity {
 
@@ -18,8 +26,10 @@ public class RsvpActivity extends AppCompatActivity {
     Event event;
     SharedPreferences prefs;
     String resp;
+    int seats = 0;
 
     boolean isDriver = false;
+    boolean isPassenger = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +52,7 @@ public class RsvpActivity extends AppCompatActivity {
                 rid = (RadioButton) findViewById(R.id.ridingButton);
                 setDisplaysVisible(false, true);
                 resp = "riding";
+                isPassenger = true;
             }
             else {
                 rid = (RadioButton) findViewById(R.id.drivingButton);
@@ -50,6 +61,7 @@ public class RsvpActivity extends AppCompatActivity {
                 int tmp = prefs.getInt("Seats",0);
                 tv.setText(tmp+"");
                 resp = "driving";
+                isDriver = true;
             }
 
             rid.setChecked(true);
@@ -115,7 +127,8 @@ public class RsvpActivity extends AppCompatActivity {
         tv.setText("Your riders are: ");
         setDisplaysVisible(true, true);
 
-        
+        isDriver = true;
+        isPassenger = false;
     }
 
     public void riding(View view)
@@ -127,34 +140,99 @@ public class RsvpActivity extends AppCompatActivity {
         TextView tv = (TextView) findViewById(R.id.textView12);
         tv.setText("Your driver is: ");
         setDisplaysVisible(false, true);
+
+        isPassenger = true;
+        isDriver = false;
     }
 
     public void respond(View view)
     {
-        RadioButton rid = (RadioButton) findViewById(R.id.drivingButton);
-        SharedPreferences.Editor edit = prefs.edit();
-        edit.putString("Response",resp);
         TextView tv = (TextView) findViewById(R.id.editText);
-        int seats = 0;
         try {
             seats = Integer.parseInt(tv.getText().toString());
         }
-        catch(Exception e)
-        {
+        catch(Exception e) {
             e.printStackTrace();
         }
-        if(resp.equals("driving")) {
-            edit.putInt("Seats",seats);
+
+        if (isDriver) {
+            if (seats <= 0) {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "You need seats in your car to drive people...", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+            signUpAsDriver(seats);
+        } else if (isPassenger) {
+
+            boolean alreadyPassenger = false;
+
+            for (ParseUser passenger : event.getPassengers()) {
+                if (passenger.getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
+                    alreadyPassenger = true;
+                    break;
+                }
+            }
+
+            if (!alreadyPassenger) {
+                signUpAsPassenger();
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "You are already signed up as a passenger.", Toast.LENGTH_SHORT);
+                toast.show();
+                Log.v(RsvpActivity.class.getName(), "Already a passenger.");
+            }
         }
-        edit.commit();
-        finish();
-    }
-
-    public void submitButtonTapped(View view) {
-
-
 
     }
 
+    public void signUpAsDriver(int seats) {
+
+        Log.v(RsvpActivity.class.getName(), "Will sign up as driver.");
+
+
+    }
+
+    public void signUpAsPassenger() {
+
+        Log.v(RsvpActivity.class.getName(), "Will sign up as passenger.");
+
+        Button button = (Button)findViewById(R.id.submitButton);
+        button.setEnabled(false);
+
+        // move current user to passengers and passengers without rides
+        event.getPassengers().add(ParseUser.getCurrentUser());
+        // save
+        event.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.v(RsvpActivity.class.getName(), "Added to passengers.");
+
+                    // toast
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "RSVP as passenger!", Toast.LENGTH_SHORT);
+                    toast.show();
+
+                    // save into preferences
+                    SharedPreferences.Editor edit = prefs.edit();
+                    edit.putString("Response", resp);
+                    if (resp.equals("driving")) {
+                        edit.putInt("Seats", seats);
+                    }
+                    edit.commit();
+
+                } else {
+
+                    // enable button again
+                    Button button = (Button)findViewById(R.id.submitButton);
+                    button.setEnabled(true);
+                    // toast
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "Failed to RSVP as passenger.", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            }
+        });
+    }
 
 }

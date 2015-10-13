@@ -39,6 +39,7 @@ public class RideApplication extends Application {
         // Parse
         //Parse.enableLocalDatastore(this);
         ParseObject.registerSubclass(Event.class);
+        ParseObject.registerSubclass(Ride.class);
         Parse.initialize(this, "Sh5dYjUxshRrnA3G1uHQua4LzisHV5o8eexJXu74", "r80yIRA4BOPx3Ex9SABv5C3FVu9l39CemDkyGc3d");
     }
 

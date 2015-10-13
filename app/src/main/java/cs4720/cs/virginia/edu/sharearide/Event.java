@@ -76,11 +76,6 @@ public class Event extends ParseObject implements Comparable {
         put("host", host);
     }
 
-    public String name;
-    public String date;
-    public String location;
-    public String description;
-
     public ArrayList<ParseUser> getInvitees() {
         ArrayList<ParseUser> invitees = (ArrayList<ParseUser>)get("invitees");
         if (invitees == null) {
@@ -95,8 +90,6 @@ public class Event extends ParseObject implements Comparable {
         put("invitees", invitees);
     }
 
-    public ArrayList<ParseUser> invitees;
-
     public int getId() {
         return id;
     }
@@ -104,6 +97,36 @@ public class Event extends ParseObject implements Comparable {
     public void setId(int id) {
         this.id = id;
     }
+
+    public void setPassengers(ArrayList<ParseUser> passengers) {
+        put("passengers", passengers);
+    }
+
+    public ArrayList<ParseUser> getPassengers() {
+        return (ArrayList<ParseUser>)get("passengers");
+    }
+
+    public void setDrivers(ArrayList<ParseUser> drivers) {
+        put("drivers", drivers);
+    }
+
+    public ArrayList<ParseUser> getDrivers() {
+        return (ArrayList<ParseUser>)get("drivers");
+    }
+
+    public void setPassengersWithRides(ArrayList<ParseUser> passengersWithRides) {
+        put("passengersWithRides", passengersWithRides);
+    }
+
+    public ArrayList<ParseUser> getPassengersWithRides() {
+        return (ArrayList<ParseUser>)get("passengersWithRides");
+    }
+
+    public String name;
+    public String date;
+    public String location;
+    public String description;
+    public ArrayList<ParseUser> invitees;
 
     public int id;
 
@@ -129,6 +152,9 @@ public class Event extends ParseObject implements Comparable {
         setDescription(desc);
         invitees = new ArrayList<ParseUser>();
         setInvitees(new ArrayList<ParseUser>());
+        setPassengers(new ArrayList<ParseUser>());
+        setDrivers(new ArrayList<ParseUser>());
+        setPassengersWithRides(new ArrayList<ParseUser>());
         this.expanded = false;
     }
     public String toString()
@@ -137,7 +163,11 @@ public class Event extends ParseObject implements Comparable {
     }
 
     @Override
+    /*
     public int compareTo(Object another) {
         return this.name.compareTo(((Event)another).name);
+    }*/
+    public int compareTo(Object another) {
+        return this.getObjectId().compareTo(((Event)another).getObjectId());
     }
 }
