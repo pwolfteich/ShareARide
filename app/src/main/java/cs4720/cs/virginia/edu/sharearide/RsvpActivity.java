@@ -108,7 +108,6 @@ public class RsvpActivity extends AppCompatActivity {
                         Toast toast = Toast.makeText(getApplicationContext(),
                                 "Could not find driver for your ride.", Toast.LENGTH_SHORT);
                         toast.show();
-                        Log.e("tag", "nada " + e.getMessage());
                     }
                 } else {
                     Toast toast = Toast.makeText(getApplicationContext(),
