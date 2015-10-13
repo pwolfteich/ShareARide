@@ -66,7 +66,7 @@ public class Ride extends ParseObject {
     public Event event;
 
     public Ride() {
-        setPassengers(new ArrayList<ParseUser>());
+        //setPassengers(new ArrayList<ParseUser>());
     }
 
     public Ride(ParseUser driver, Event event) {

@@ -114,9 +114,9 @@
         android:checked="false"
         android:clickable="true"
         android:onClick="driving"
-        android:layout_alignTop="@+id/editText"
-        android:layout_alignRight="@+id/textView12"
-        android:layout_alignEnd="@+id/textView12"
+        android:layout_alignTop="@+id/seatsField"
+        android:layout_alignRight="@+id/rideInfoTextView"
+        android:layout_alignEnd="@+id/rideInfoTextView"
         android:textSize="18dp"
         android:textStyle="bold" />
 
@@ -136,10 +136,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Your driver/riders"
-        android:id="@+id/textView12"
-        android:layout_below="@+id/editText"
-        android:layout_toLeftOf="@+id/editText"
-        android:layout_toStartOf="@+id/editText"
+        android:id="@+id/rideInfoTextView"
+        android:layout_below="@+id/seatsField"
+        android:layout_toLeftOf="@+id/seatsField"
+        android:layout_toStartOf="@+id/seatsField"
         android:textSize="16dp" />
 
     <TextView
@@ -157,7 +157,7 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:ems="10"
-        android:id="@+id/editText"
+        android:id="@+id/seatsField"
         android:layout_below="@+id/textView13"
         android:layout_alignLeft="@+id/textView13"
         android:layout_alignStart="@+id/textView13"
@@ -170,7 +170,7 @@
         android:text="Submit"
         android:id="@+id/submitButton"
         android:onClick="respond"
-        android:layout_below="@+id/textView12"
+        android:layout_below="@+id/rideInfoTextView"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
