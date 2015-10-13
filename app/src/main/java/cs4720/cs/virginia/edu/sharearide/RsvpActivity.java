@@ -18,6 +18,9 @@ public class RsvpActivity extends AppCompatActivity {
     Event event;
     SharedPreferences prefs;
     String resp;
+
+    boolean isDriver = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +104,7 @@ public class RsvpActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
     public void driving(View view)
     {
         RadioButton rid = (RadioButton) findViewById(R.id.ridingButton);
@@ -110,7 +114,10 @@ public class RsvpActivity extends AppCompatActivity {
         TextView tv = (TextView) findViewById(R.id.textView12);
         tv.setText("Your riders are: ");
         setDisplaysVisible(true, true);
+
+        
     }
+
     public void riding(View view)
     {
         RadioButton rid = (RadioButton) findViewById(R.id.drivingButton);
@@ -121,6 +128,7 @@ public class RsvpActivity extends AppCompatActivity {
         tv.setText("Your driver is: ");
         setDisplaysVisible(false, true);
     }
+
     public void respond(View view)
     {
         RadioButton rid = (RadioButton) findViewById(R.id.drivingButton);
@@ -141,4 +149,12 @@ public class RsvpActivity extends AppCompatActivity {
         edit.commit();
         finish();
     }
+
+    public void submitButtonTapped(View view) {
+
+
+
+    }
+
+
 }

@@ -160,7 +160,7 @@ public class InviteFriends extends AppCompatActivity {
 
     public void addFriend(View view)
     {
-        TextView tv = (TextView) findViewById(R.id.editText6);
+        TextView tv = (TextView) findViewById(R.id.searchFriendField);
         String newFriendName = tv.getText().toString();
         if (!friendsList.contains(newFriendName))
         {
@@ -211,7 +211,7 @@ public class InviteFriends extends AppCompatActivity {
                 int duration = Toast.LENGTH_SHORT;
                 if (e == null) {
                     text = "Added friend!";
-                    TextView textView = (TextView)findViewById(R.id.editText6);
+                    TextView textView = (TextView)findViewById(R.id.searchFriendField);
                     textView.setText("");
 
                     // need this for some reason
