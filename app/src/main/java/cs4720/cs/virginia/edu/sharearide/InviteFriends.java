@@ -53,12 +53,15 @@ public class InviteFriends extends AppCompatActivity {
         friendsList = new ArrayList<String>();
         invitedFriends = new ArrayList<String>();
         friendHelper = new FriendStorageHelper("friends",this);
+        friendsList.addAll(friendHelper.readFriends());
 
-        loadFriends();
+
         inviteAdapter = new InviteListAdapter(this,friendsList,invitedFriends);
-
         inviteAdapter.notifyDataSetChanged();
         listEvents.setAdapter(inviteAdapter);
+        loadFriends();
+
+        inviteAdapter.notifyDataSetChanged();
 
     }
 
@@ -85,16 +88,16 @@ public class InviteFriends extends AppCompatActivity {
         }
     }
 
-        invitedFriends.add("First friend");*/
-        friendsList = friendHelper.readFriends();
     public void loadListView() {
 
         ParseUser currentUser = ParseUser.getCurrentUser();
         ArrayList<ParseUser> friends = (ArrayList<ParseUser>)currentUser.get("friends");
+        friendsList.clear();
         for (int i = 0; i < friends.size(); i++) {
             ParseUser friend = friends.get(i);
             friendsList.add(friend.getUsername());
         }
+        friendHelper.setFriends(friendsList);
         ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
         progressBar.setVisibility(View.INVISIBLE);
     }
@@ -155,9 +158,10 @@ public class InviteFriends extends AppCompatActivity {
                     }
                 }
             });
+            //inviteAdapter.notifyDataSetChanged();
+            //friendHelper.addFriend(newFriendName);
         }
-        inviteAdapter.notifyDataSetChanged();
-        friendHelper.addFriend(newFriend);
+
     }
 
     public void addNewFriend(ParseUser friend) {
@@ -172,7 +176,7 @@ public class InviteFriends extends AppCompatActivity {
                 int duration = Toast.LENGTH_SHORT;
                 if (e == null) {
                     text = "Added friend!";
-                    TextView textView = (TextView)findViewById(R.id.editText6);
+                    TextView textView = (TextView) findViewById(R.id.editText6);
                     textView.setText("");
                 } else {
                     text = "Failed to add friend :(";
@@ -183,6 +187,8 @@ public class InviteFriends extends AppCompatActivity {
         });
         // add friend to database
 
+        inviteAdapter.notifyDataSetChanged();
+        friendHelper.addFriend(friend.getUsername());
     }
 
     public void invite(View view)
@@ -200,6 +206,6 @@ public class InviteFriends extends AppCompatActivity {
         {
             invitedFriends.add(name);
         }
-
+        finish();
     }
 }

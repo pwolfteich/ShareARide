@@ -199,6 +199,7 @@ public class EventListActivity extends AppCompatActivity {
 
     public void loadEvents()
     {
+
         //eventList = dbHelper.getEvents();
         eventList.clear();
         eventList.addAll(dbHelper.getEvents());

@@ -1,6 +1,8 @@
 package cs4720.cs.virginia.edu.sharearide;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +16,8 @@ public class RsvpActivity extends AppCompatActivity {
 
     EventsDbHelper dbHelper;
     Event event;
+    SharedPreferences prefs;
+    String resp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,8 +28,32 @@ public class RsvpActivity extends AppCompatActivity {
         dbHelper = EventsDbHelper.getInstance(this);
         event = dbHelper.getEvent(id);
 
-        setDisplaysVisible(false, false);
+        prefs = this.getSharedPreferences("rsvp", Context.MODE_PRIVATE);
+        if (prefs.contains("Response"))
+        {
+            RadioButton rid = null;
+
+            if(prefs.getString("Response","").equals("riding")) {
+                rid = (RadioButton) findViewById(R.id.ridingButton);
+                setDisplaysVisible(false, true);
+                resp = "riding";
+            }
+            else {
+                rid = (RadioButton) findViewById(R.id.drivingButton);
+                setDisplaysVisible(true, true);
+                TextView tv = (TextView) findViewById(R.id.editText);
+                int tmp = prefs.getInt("Seats",0);
+                tv.setText(tmp+"");
+                resp = "driving";
+            }
+
+            rid.setChecked(true);
+        }
+        else {
+            setDisplaysVisible(false, false);
+        }
         populateFields();
+
     }
     public void populateFields()
     {
@@ -44,7 +72,7 @@ public class RsvpActivity extends AppCompatActivity {
     public void setDisplaysVisible(boolean vis, boolean selected)
     {
         TextView tv = (TextView) findViewById(R.id.textView13);
-        tv.setVisibility( (vis) ? View.VISIBLE : View.INVISIBLE);
+        tv.setVisibility((vis) ? View.VISIBLE : View.INVISIBLE);
         tv = (TextView) findViewById(R.id.editText);
         tv.setVisibility((vis) ? View.VISIBLE : View.INVISIBLE);
         tv = (TextView) findViewById(R.id.textView12);
@@ -75,6 +103,7 @@ public class RsvpActivity extends AppCompatActivity {
     {
         RadioButton rid = (RadioButton) findViewById(R.id.ridingButton);
         rid.setChecked(false);
+        resp="driving";
 
         TextView tv = (TextView) findViewById(R.id.textView12);
         tv.setText("Your riders are: ");
@@ -84,9 +113,30 @@ public class RsvpActivity extends AppCompatActivity {
     {
         RadioButton rid = (RadioButton) findViewById(R.id.drivingButton);
         rid.setChecked(false);
+        resp = "riding";
 
         TextView tv = (TextView) findViewById(R.id.textView12);
         tv.setText("Your driver is: ");
         setDisplaysVisible(false, true);
+    }
+    public void respond(View view)
+    {
+        RadioButton rid = (RadioButton) findViewById(R.id.drivingButton);
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putString("Response",resp);
+        TextView tv = (TextView) findViewById(R.id.editText);
+        int seats = 0;
+        try {
+            seats = Integer.parseInt(tv.getText().toString());
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        if(resp.equals("driving")) {
+            edit.putInt("Seats",seats);
+        }
+        edit.commit();
+        finish();
     }
 }

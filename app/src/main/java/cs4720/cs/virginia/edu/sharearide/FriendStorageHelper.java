@@ -30,6 +30,12 @@ public class FriendStorageHelper {
         friends.add(friend);
         writeFriends();
     }
+    public void setFriends(ArrayList<String> allFriends)
+    {
+        friends.clear();
+        friends.addAll(allFriends);
+        writeFriends();
+    }
     public void removeFriend(String friend)
     {
         try {
